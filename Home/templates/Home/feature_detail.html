@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}{{ feature.title }} - News & Media{% endblock %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#{{ feature.get_section_display|lower }}">{{ feature.get_section_display }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ feature.title }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <article>
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="mb-3">{{ feature.title }}</h1>
+                <p class="text-muted">
+                    <small>Posted: {{ feature.created_at|date:"F j, Y" }}</small>
+                </p>
+            </div>
+        </div>
+
+        {% if feature.image %}
+        <div class="row mb-4">
+            <div class="col-12 col-md-10 offset-md-1">
+                <img src="{{ feature.image.url }}" class="img-fluid rounded" alt="{{ feature.title }}">
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="content">
+                    <p class="lead">{{ feature.description }}</p>
+                </div>
+
+                {% if feature.link %}
+                <div class="mt-4">
+                    <a href="{{ feature.link }}" class="btn btn-primary" target="_blank">Visit Source</a>
+                </div>
+                {% endif %}
+
+                <div class="mt-5">
+                    <a href="{% url 'home:home' %}#{{ feature.section }}" class="btn btn-secondary">Back to {{ feature.get_section_display }}</a>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <hr class="my-5">
+
+    <!-- Related Features -->
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">More {{ feature.get_section_display }}</h3>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for related in feature.related_features|slice:":4" %}
+            <div class="col">
+                <div class="card feature-card h-100">
+                    {% if related.image %}
+                        <img src="{{ related.image.url }}" class="card-img-top" alt="{{ related.title }}">
+                    {% else %}
+                        <img src="https://placehold.co/600x400?text={{ related.get_section_display }}" class="card-img-top" alt="Placeholder">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ related.title }}</h5>
+                        <p class="card-text">{{ related.description|truncatewords:15 }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <a href="{% url 'home:feature_detail' related.id %}" class="btn btn-sm btn-outline-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,172 @@
+/* Custom styles for the Home app */
+
+/* Hero section */
+.hero-banner {
+    background-color: #f8f9fa;
+    padding: 4rem 2rem;
+    border-radius: 0.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Feature cards */
+.feature-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Section headers */
+.section-header {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.section-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100px;
+    background-color: #007bff;
+}
+
+.section-header.sports::after {
+    background-color: #28a745;
+}
+
+.section-header.events::after {
+    background-color: #ffc107;
+}
+
+/* Card image */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Feature detail page */
+.feature-detail-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.feature-meta {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+/* Compact Footer */
+.footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    font-size: 0.95rem;
+    margin-top: 2.5rem;
+    padding: 0.5rem 0 0.2rem;
+}
+.footer .fw-bold {
+    font-weight: 600;
+}
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 1.15em;
+    vertical-align: middle;
+}
+.footer a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+.footer .bi {
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+.footer .social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e9ecef;
+    margin-right: 2px;
+    transition: background 0.2s, color 0.2s;
+}
+.footer .social-icons a:last-child {
+    margin-right: 0;
+}
+.footer .social-icons a:hover {
+    background: #007bff;
+    color: #fff;
+}
+.footer .container {
+    padding-left: 0;
+    padding-right: 0;
+}
+.footer .d-flex > div {
+    line-height: 1.5;
+}
+@media (max-width: 768px) {
+    .footer .d-flex {
+        flex-direction: column !important;
+        gap: 0.25rem;
+    }
+    .footer .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-banner {
+        padding: 2rem 1rem;
+    }
+    
+    .card-img-top {
+        height: 150px;
+    }
+    
+    .footer {
+        padding: 1.5rem 0 1rem;
+        text-align: center;
+    }
+    
+    .footer .social-icons {
+        margin-bottom: 1.5rem;
+    }
+    
+    .footer h5 {
+        margin-top: 1.5rem;
+    }
+    
+    .footer .col-md-4:first-child h5 {
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer {
+        padding: 1rem 0;
+        font-size: 0.85rem;
+    }
+    
+    .footer h5 {
+        font-size: 1rem;
+    }
+    
+    .footer .social-icons a {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+}

@@ -24,5 +24,13 @@ class LandingFeature(models.Model):
 
     def __str__(self):
         return f"{self.get_section_display()} - {self.title}"
+    
+    @property
+    def related_features(self):
+        """Return other active features in the same section, excluding self"""
+        return LandingFeature.objects.filter(
+            section=self.section, 
+            is_active=True
+        ).exclude(id=self.id)
 
 

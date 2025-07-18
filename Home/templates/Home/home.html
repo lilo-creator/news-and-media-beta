@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Home - News & Media{% endblock %}
+
+{% block content %}
+    <!-- Hero Banner -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="bg-light p-5 rounded">
+                <h1 class="display-4">Welcome to News & Media</h1>
+                <p class="lead">Your one-stop destination for the latest news, sports updates, and upcoming events.</p>
+                <hr class="my-4">
+                <p>Discover what's happening in your world right now.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- News Section -->
+    <section id="news" class="mb-5">
+        <h2 class="section-header">Latest News</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for feature in news_features %}
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        {% if feature.image %}
+                            <img src="{{ feature.image.url }}" class="card-img-top" alt="{{ feature.title }}">
+                        {% else %}
+                            <img src="https://placehold.co/600x400?text=News" class="card-img-top" alt="News Placeholder">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ feature.title }}</h5>
+                            <p class="card-text">{{ feature.description|truncatewords:25 }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <a href="{% if feature.link %}{{ feature.link }}{% else %}{% url 'home:feature_detail' feature.id %}{% endif %}" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">No news articles available at the moment.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Sports Section -->
+    <section id="sports" class="mb-5">
+        <h2 class="section-header">Sports Updates</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for feature in sports_features %}
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        {% if feature.image %}
+                            <img src="{{ feature.image.url }}" class="card-img-top" alt="{{ feature.title }}">
+                        {% else %}
+                            <img src="https://placehold.co/600x400?text=Sports" class="card-img-top" alt="Sports Placeholder">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ feature.title }}</h5>
+                            <p class="card-text">{{ feature.description|truncatewords:25 }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <a href="{% if feature.link %}{{ feature.link }}{% else %}{% url 'home:feature_detail' feature.id %}{% endif %}" class="btn btn-success">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">No sports updates available at the moment.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events" class="mb-5">
+        <h2 class="section-header">Upcoming Events</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for feature in events_features %}
+                <div class="col">
+                    <div class="card feature-card h-100">
+                        {% if feature.image %}
+                            <img src="{{ feature.image.url }}" class="card-img-top" alt="{{ feature.title }}">
+                        {% else %}
+                            <img src="https://placehold.co/600x400?text=Events" class="card-img-top" alt="Events Placeholder">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ feature.title }}</h5>
+                            <p class="card-text">{{ feature.description|truncatewords:25 }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <a href="{% if feature.link %}{{ feature.link }}{% else %}{% url 'home:feature_detail' feature.id %}{% endif %}" class="btn btn-warning">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">No events scheduled at the moment.</div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

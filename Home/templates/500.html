@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - News & Media{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 text-center">
+        <h1 class="display-1">500</h1>
+        <h2 class="mb-4">Server Error</h2>
+        <p class="lead mb-5">Something went wrong on our servers. We're working to fix the issue. Please try again later.</p>
+        <a href="{% url 'home:home' %}" class="btn btn-primary btn-lg">Go to Home Page</a>
+    </div>
+</div>
+{% endblock %}

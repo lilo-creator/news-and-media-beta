@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ match.home_team }} vs {{ match.away_team }}</h1>
+<p>Date: {{ match.match_date }}</p>
+<p>Venue: {{ match.venue }}</p>
+<p>Status: {{ match.get_status_display }}</p>
+{% if match.status == 'completed' %}
+<p>Score: {{ match.home_score }} - {{ match.away_score }}</p>
+{% endif %}
+<p>{{ match.summary }}</p>
+{% endblock %}

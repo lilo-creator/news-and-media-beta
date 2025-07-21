@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('Home.urls', namespace='home')),
     path('news/', include('News.urls', namespace='news')),
+    path('sports/', include('Sports.urls', namespace='sports')),
 ]
 
 # Serve media files in development

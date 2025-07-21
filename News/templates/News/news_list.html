@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}News{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Latest News</h1>
+    
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form class="d-flex" method="get">
+                <input class="form-control me-2" type="search" placeholder="Search news..." name="search" value="{{ request.GET.search }}">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if request.GET.category %}
+                        {{ request.GET.category|title }}
+                    {% else %}
+                        Filter by Category
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu w-100" aria-labelledby="categoryDropdown">
+                    <li><a class="dropdown-item" href="{% url 'news:list' %}">All Categories</a></li>
+                    {% for cat in categories %}
+                        <li><a class="dropdown-item" href="?category={{ cat.slug }}">{{ cat.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for article in news_list %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if article.featured_image %}
+                        <img src="{{ article.featured_image.url }}" class="card-img-top" alt="{{ article.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ article.title }}</h5>
+                        <p class="card-text">{{ article.summary|truncatewords:30 }}</p>
+                        <p class="text-muted">
+                            <small>
+                                Published on {{ article.publish_date|date:"F j, Y" }}
+                                {% if article.category %}
+                                    in {{ article.category }}
+                                {% endif %}
+                            </small>
+                        </p>
+                        <a href="{% url 'news:detail' article.slug %}" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p>No news articles available at the moment.</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+    {% if is_paginated %}
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

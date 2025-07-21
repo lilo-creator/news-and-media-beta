@@ -48,6 +48,7 @@ class Article(models.Model):
     featured_image = models.ImageField(upload_to='news_images/%Y/%m/%d/', blank=True, null=True)
     excerpt = models.TextField(blank=True, max_length=500)
     content = models.TextField()
+    featured = models.BooleanField(default=False, help_text="Display this article on the home page")
     
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
     publish_date = models.DateTimeField(default=timezone.now)

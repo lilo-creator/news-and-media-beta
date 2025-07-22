@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+
+{% block title %}Events - News & Media{% endblock %}
+
+{% block extra_css %}
+<style>
+    .events-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .events-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="grain" width="100" height="20" patternUnits="userSpaceOnUse"><circle cx="50" cy="10" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="20" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .events-hero > * {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .search-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .search-input {
+        border-radius: 50px;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .filter-btn {
+        border-radius: 25px;
+        padding: 0.5rem 1.5rem;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .filter-btn.active {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: transparent;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .filter-btn:not(.active) {
+        background: #f8f9fa;
+        border-color: #dee2e6;
+        color: #6c757d;
+    }
+    
+    .filter-btn:not(.active):hover {
+        background: #e9ecef;
+        transform: translateY(-1px);
+    }
+    
+    .tag-pill {
+        border-radius: 20px;
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        border: 2px solid;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0.2rem;
+    }
+    
+    .tag-pill:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .event-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: white;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        height: 100%;
+    }
+    
+    .event-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .event-image {
+        height: 220px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .event-card:hover .event-image {
+        transform: scale(1.05);
+    }
+    
+    .event-date-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #ff6b6b, #feca57);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        z-index: 2;
+    }
+    
+    .event-meta-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .event-meta-item i {
+        width: 20px;
+        margin-right: 0.5rem;
+        color: #667eea;
+    }
+    
+    .event-price {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .sidebar-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+        border: none;
+    }
+    
+    .featured-event {
+        padding: 1rem;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .featured-event:hover {
+        transform: translateX(5px);
+    }
+    
+    .results-info {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid #667eea;
+    }
+    
+    .pagination .page-link {
+        border-radius: 10px;
+        margin: 0 0.2rem;
+        border: none;
+        color: #667eea;
+        padding: 0.5rem 1rem;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: transparent;
+    }
+    
+    .no-events {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+        border-radius: 20px;
+        color: #6c5ce7;
+    }
+    
+    .no-events i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <div class="events-hero text-white">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="bi bi-calendar-star me-3"></i>Discover Amazing Events
+                </h1>
+                <p class="lead mb-0">
+                    Connect with your community through unforgettable experiences and meaningful gatherings
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'events:create_event' %}" class="btn btn-light btn-lg rounded-pill px-4">
+                        <i class="bi bi-plus-circle me-2"></i>Create Event
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters Container -->
+    <div class="search-container">
+        <div class="row g-4">
+            <!-- Search Bar -->
+            <div class="col-lg-6">
+                <form method="get" class="d-flex">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" name="q" class="form-control search-input border-start-0" 
+                               placeholder="Search events by name, venue, or description..." 
+                               value="{{ search_query }}">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 ms-2">
+                            <i class="bi bi-search me-1"></i>Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Date Filters -->
+            <div class="col-lg-6">
+                <div class="d-flex gap-2 justify-content-lg-end flex-wrap">
+                    <a href="?filter=upcoming{% if search_query %}&q={{ search_query }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}" 
+                       class="filter-btn {% if current_filter == 'upcoming' %}active{% endif %}">
+                        <i class="bi bi-calendar-plus me-1"></i>Upcoming
+                    </a>
+                    <a href="?filter=past{% if search_query %}&q={{ search_query }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}" 
+                       class="filter-btn {% if current_filter == 'past' %}active{% endif %}">
+                        <i class="bi bi-calendar-minus me-1"></i>Past
+                    </a>
+                    <a href="?{% if search_query %}q={{ search_query }}&{% endif %}{% if current_tag %}tag={{ current_tag }}{% endif %}" 
+                       class="filter-btn {% if not current_filter %}active{% endif %}">
+                        <i class="bi bi-calendar3 me-1"></i>All
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tags Filter -->
+        {% if tags %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <h6 class="text-muted mb-3">
+                    <i class="bi bi-tags me-2"></i>Filter by categories:
+                </h6>
+                <div class="d-flex flex-wrap">
+                    <a href="?{% if current_filter %}filter={{ current_filter }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}" 
+                       class="tag-pill {% if not current_tag %}bg-secondary text-white border-secondary{% else %}bg-light text-muted border-light{% endif %}">
+                        All Categories
+                    </a>
+                    {% for tag in tags %}
+                        <a href="?{% if current_filter %}filter={{ current_filter }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}tag={{ tag.slug }}" 
+                           class="tag-pill {% if current_tag == tag.slug %}text-white border-0{% else %}text-muted{% endif %}" 
+                           style="{% if current_tag == tag.slug %}background-color: {{ tag.color }}; border-color: {{ tag.color }};{% else %}background-color: white; border-color: {{ tag.color }}; color: {{ tag.color }};{% endif %}">
+                            {{ tag.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="row g-4">
+        <!-- Events Grid -->
+        <div class="col-lg-9">
+            <!-- Results Info -->
+            {% if page_obj or search_query or current_tag or current_filter %}
+            <div class="results-info">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-info-circle me-2 text-primary"></i>
+                        {% if search_query %}
+                            Search results for "<strong>{{ search_query }}</strong>"
+                            {% if current_tag %}in <strong>{{ current_tag }}</strong> events{% endif %}
+                        {% elif current_tag %}
+                            Events in category: <strong>{{ current_tag|title }}</strong>
+                        {% elif current_filter == 'upcoming' %}
+                            Showing upcoming events
+                        {% elif current_filter == 'past' %}
+                            Showing past events
+                        {% else %}
+                            Showing all events
+                        {% endif %}
+                        - <strong>{{ total_events }}</strong> event{{ total_events|pluralize }} found
+                    </div>
+                    {% if page_obj.has_other_pages %}
+                    <small class="text-muted">
+                        <i class="bi bi-layers me-1"></i>
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if page_obj %}
+                <div class="row g-4">
+                    {% for event in page_obj %}
+                        <div class="col-lg-6">
+                            <div class="card event-card">
+                                <div class="position-relative overflow-hidden">
+                                    {% if event.banner_image %}
+                                        <img src="{{ event.banner_image.url }}" class="card-img-top event-image" alt="{{ event.title }}">
+                                    {% elif event.banner_image_url %}
+                                        <img src="{{ event.banner_image_url }}" class="card-img-top event-image" alt="{{ event.title }}">
+                                    {% else %}
+                                        <div class="event-image d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #74b9ff, #0984e3); height: 220px;">
+                                            <div class="text-center text-white">
+                                                <i class="bi bi-calendar-event" style="font-size: 3rem;"></i>
+                                                <p class="mt-2 mb-0 fw-bold">{{ event.title|truncatewords:3 }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <div class="event-date-badge">
+                                        {{ event.date|date:"M d" }}
+                                    </div>
+                                </div>
+                                <div class="card-body p-4">
+                                    <h5 class="card-title fw-bold mb-3">{{ event.title }}</h5>
+                                    <p class="card-text text-muted mb-3">{{ event.description|truncatewords:18 }}</p>
+                                    
+                                    <div class="event-meta-item">
+                                        <i class="bi bi-clock"></i>
+                                        <span>{{ event.time_display }}</span>
+                                    </div>
+                                    
+                                    <div class="event-meta-item">
+                                        <i class="bi bi-geo-alt"></i>
+                                        <span>{{ event.venue_name }}</span>
+                                    </div>
+                                    
+                                    <div class="event-meta-item">
+                                        <i class="bi bi-building"></i>
+                                        <span>{{ event.host.name }}</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mt-4">
+                                        <span class="event-price">{{ event.ticket_price }}</span>
+                                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary rounded-pill px-4">
+                                            <i class="bi bi-arrow-right me-1"></i>View Details
+                                        </a>
+                                    </div>
+                                    
+                                    {% if event.tags.all %}
+                                    <div class="mt-3">
+                                        {% for tag in event.tags.all|slice:":3" %}
+                                            <span class="badge rounded-pill me-1" style="background-color: {{ tag.color }}20; color: {{ tag.color }}; border: 1px solid {{ tag.color }}40;">
+                                                {{ tag.name }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.has_other_pages %}
+                <nav aria-label="Events pagination" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_filter %}&filter={{ current_filter }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_filter %}&filter={{ current_filter }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_filter %}&filter={{ current_filter }}{% endif %}{% if current_tag %}&tag={{ current_tag }}{% endif %}">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            {% else %}
+                <div class="no-events">
+                    <i class="bi bi-calendar-x"></i>
+                    <h4 class="fw-bold">No Events Found</h4>
+                    <p class="mb-4">We couldn't find any events matching your criteria.</p>
+                    <a href="?" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Reset Filters
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

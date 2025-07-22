@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tag.name }} Events - News & Media{% endblock %}
+
+{% block content %}
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'events:event_list' %}">Events</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ tag.name }}</li>
+                </ol>
+            </nav>
+            <h1>{{ tag.name }} Events</h1>
+        </div>
+    </div>
+
+    <!-- Events List -->
+    {% if page_obj %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for event in page_obj %}
+                <div class="col">
+                    <div class="card event-card h-100">
+                        <div class="position-relative">
+                            {% if event.banner_image %}
+                                <img src="{{ event.banner_image.url }}" class="event-banner" alt="{{ event.title }}">
+                            {% elif event.banner_image_url %}
+                                <img src="{{ event.banner_image_url }}" class="event-banner" alt="{{ event.title }}">
+                            {% else %}
+                                <img src="https://placehold.co/600x300?text=Event" class="event-banner" alt="Event Placeholder">
+                            {% endif %}
+                            <div class="event-date-badge">
+                                {{ event.date|date:"M d" }}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.title }}</h5>
+                            <p class="card-text">{{ event.description|truncatewords:15 }}</p>
+                            
+                            <div class="event-meta">
+                                <i class="bi bi-clock"></i>
+                                <span>{{ event.time_display }}</span>
+                            </div>
+                            
+                            <div class="event-meta">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>{{ event.venue_name }}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="event-price">{{ event.ticket_price }}</span>
+                                <a href="{{ event.get_absolute_url }}" class="btn btn-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Events pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <h4>No {{ tag.name }} events found</h4>
+            <p class="text-muted">Check back later for new {{ tag.name }} events.</p>
+            <a href="{% url 'events:event_list' %}" class="btn btn-primary">View All Events</a>
+        </div>
+    {% endif %}
+{% endblock %}

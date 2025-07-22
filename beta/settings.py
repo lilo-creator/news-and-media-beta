@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'Home',
     'News',
     'Sports',
+    'Events',
 ]
 
 MIDDLEWARE = [

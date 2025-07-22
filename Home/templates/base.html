@@ -10,31 +10,125 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     {% load static %}
     <!-- Custom CSS -->
-    <link href="{% static 'Home/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
     {% block extra_css %}{% endblock %}
+    
+    <style>
+        /* Modern Navigation Styles */
+        .navbar-modern {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand-modern {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .navbar-brand-modern:hover {
+            color: #f8f9fa !important;
+        }
+        
+        .nav-link-modern {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            margin: 0 0.25rem;
+        }
+        
+        .nav-link-modern:hover, .nav-link-modern.active {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-1px);
+        }
+        
+        .footer-modern {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 0 2rem;
+            margin-top: 5rem;
+        }
+        
+        .footer-modern a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-modern a:hover {
+            color: white;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <nav class="navbar navbar-expand-lg navbar-modern">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home:home' %}">News & Media</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            <a class="navbar-brand-modern" href="{% url 'home:home' %}">
+                <i class="bi bi-broadcast"></i>
+                News & Media
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'home:home' %}">Home</a>
+                        <a class="nav-link-modern {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home:home' %}">
+                            <i class="bi bi-house me-1"></i>Home
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#news">News</a>
+                        <a class="nav-link-modern {% if 'news' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'news:list' %}">
+                            <i class="bi bi-newspaper me-1"></i>News
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#sports">Sports</a>
+                        <a class="nav-link-modern {% if 'sports' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'sports:sport_list' %}">
+                            <i class="bi bi-trophy me-1"></i>Sports
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#events">Events</a>
+                        <a class="nav-link-modern {% if 'events' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'events:event_list' %}">
+                            <i class="bi bi-calendar3 me-1"></i>Events
+                        </a>
                     </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link-modern dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-plus-circle me-1"></i>Create
+                        </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'events:create_event' %}"><i class="bi bi-calendar-plus me-2"></i>New Event</a></li>
+                            <li><a class="dropdown-item" href="{% url 'events:create_host' %}"><i class="bi bi-building me-2"></i>New Organization</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -46,19 +140,57 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer mt-5">
-        <div class="container text-center small py-2">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <div class="mb-2 mb-md-0">
-                    <span class="fw-bold">News & Media</span> &mdash; Your trusted source for news, sports, and events.
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-broadcast me-2"></i>News & Media
+                    </h5>
+                    <p class="mb-3">Your premier destination for breaking news, sports updates, and exclusive event coverage. Stay informed, stay connected.</p>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                    </div>
                 </div>
-                <div>
-                    <a href="#" class="me-2" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="me-2" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="me-2" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                <div class="col-md-2 mb-4">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'home:home' %}">Home</a></li>
+                        <li class="mb-2"><a href="{% url 'news:list' %}">News</a></li>
+                        <li class="mb-2"><a href="{% url 'sports:sport_list' %}">Sports</a></li>
+                        <li class="mb-2"><a href="{% url 'events:event_list' %}">Events</a></li>
+                    </ul>
                 </div>
-                <div class="mt-2 mt-md-0">
-                    &copy; {% now "Y" %} News & Media. All rights reserved.
+                <div class="col-md-3 mb-4">
+                    <h6 class="fw-bold mb-3">Categories</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Breaking News</a></li>
+                        <li class="mb-2"><a href="#">Politics</a></li>
+                        <li class="mb-2"><a href="#">Technology</a></li>
+                        <li class="mb-2"><a href="#">Entertainment</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6 class="fw-bold mb-3">Contact Info</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>news@media.com</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>+1 (555) 123-4567</li>
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>123 News Street, City</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; {% now "Y" %} News & Media. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="me-3">Privacy Policy</a>
+                    <a href="#" class="me-3">Terms of Service</a>
+                    <a href="#">Cookies</a>
                 </div>
             </div>
         </div>

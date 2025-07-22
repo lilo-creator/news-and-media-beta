@@ -25,7 +25,8 @@ class NewsListView(ListView):
                 Q(excerpt__icontains=search)
             )
         
-        return queryset.filter(status='published')
+        # Temporarily show all articles for debugging
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

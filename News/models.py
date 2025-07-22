@@ -48,6 +48,26 @@ class Article(models.Model):
     featured_image = models.ImageField(upload_to='news_images/%Y/%m/%d/', blank=True, null=True)
     excerpt = models.TextField(blank=True, max_length=500)
     content = models.TextField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    featured = models.BooleanField(default=False)
+    view_count = models.PositiveIntegerField(default=0)
+    publish_date = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-publish_date']
+        
+    def __str__(self):
+        return self.title
+    
+    def get_absolute_url(self):
+        return reverse('news:article_detail', args=[
+            self.publish_date.year,
+            self.publish_date.month,
+            self.publish_date.day,
+            self.slug
+        ])
     featured = models.BooleanField(default=False, help_text="Display this article on the home page")
     
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')

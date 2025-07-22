@@ -1,0 +1,757 @@
+{% extends "../base.html" %}
+
+{% block title %}Home - Your Source for News, Sports & Events{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Add any page-specific styles here */
+    .hero {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+        padding: 2rem 0;
+        margin-bottom: 3rem;
+    }
+
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        min-height: 60vh;
+    }
+
+    .hero-featured {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        border-radius: 1rem;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .hero-featured::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 70%;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    }
+
+    .hero-content {
+        position: relative;
+        padding: 2rem;
+        color: white;
+        width: 100%;
+    }
+
+    .hero-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .trending-item {
+        background: var(--surface);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .trending-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .breaking-news {
+        background: var(--accent);
+        color: white;
+        padding: 0.75rem 0;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .ticker-content {
+        display: flex;
+        animation: scroll 30s linear infinite;
+    }
+    
+    @keyframes scroll {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+    
+    .featured-section {
+        padding: 3rem 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: var(--border);
+    }
+
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .news-card {
+        background: var(--surface);
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .news-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .news-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .news-content {
+        padding: 1.5rem;
+    }
+
+    .news-category {
+        color: var(--accent);
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+    }
+
+    .news-title {
+        margin: 0.5rem 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .news-excerpt {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .news-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+    }
+    
+    .main-story:hover img {
+        transform: scale(1.05);
+    }
+    
+    .main-story-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        color: white;
+        padding: 3rem 2rem 2rem;
+    }
+    
+    .main-story-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+    
+    .main-story-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        opacity: 0.9;
+    }
+    
+{% endblock %}
+
+{% block content %}
+    <!-- Breaking News -->
+    <div class="breaking-news">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <span class="breaking-news-label">BREAKING</span>
+                <div class="ticker-content">
+                    {% if featured_news %}
+                        {% for article in featured_news|slice:":3" %}
+                            <span class="me-4">{{ article.title }} •</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="me-4">Stay tuned for the latest updates • Breaking news coming soon • More updates to follow •</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-main">
+                    {% if main_story %}
+                        <article class="hero-featured" style="background-image: url('{{ main_story.image.url }}')">
+                            <div class="hero-content">
+                                <span class="category">{{ main_story.category }}</span>
+                                <h1>{{ main_story.title }}</h1>
+                                <p>{{ main_story.excerpt }}</p>
+                                <a href="{% url 'article_detail' main_story.slug %}" class="btn btn-primary">Read More</a>
+                            </div>
+                        </article>
+                    {% else %}
+                        <article class="hero-featured">
+                            <div class="hero-content">
+                                <h1>Welcome to News & Media</h1>
+                                <p>Your trusted source for the latest news and insights from around the world.</p>
+                                <a href="{% url 'news_list' %}" class="btn btn-primary">Browse Stories</a>
+                            </div>
+                        </article>
+                    {% endif %}
+                </div>
+                <div class="hero-sidebar">
+                    {% if trending_stories %}
+                        {% for story in trending_stories|slice:":3" %}
+                            <article class="trending-item">
+                                <div class="trending-content">
+                                    <span class="category">{{ story.category }}</span>
+                                    <h3>{{ story.title }}</h3>
+                                    <span class="time">{{ story.published_at|timesince }} ago</span>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    {% else %}
+                        <div class="trending-placeholder">
+                            <h3>Trending stories coming soon</h3>
+                            <p>Stay tuned for the latest updates</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured News Section -->
+    <section class="featured-section">
+        <div class="container">
+            <h2 class="section-title">Featured Stories</h2>
+            <div class="news-grid">
+                {% if featured_stories %}
+                    {% for story in featured_stories %}
+                        <article class="news-card">
+                            {% if story.image %}
+                                <img src="{{ story.image.url }}" alt="{{ story.title }}" class="news-image">
+                            {% endif %}
+                            <div class="news-content">
+                                <span class="news-category">{{ story.category }}</span>
+                                <h3 class="news-title">{{ story.title }}</h3>
+                                <p class="news-excerpt">{{ story.excerpt }}</p>
+                                <div class="news-meta">
+                                    <span>{{ story.author }}</span>
+                                    <span>•</span>
+                                    <span>{{ story.published_at|timesince }} ago</span>
+                                </div>
+                                <a href="{% url 'article_detail' story.slug %}" class="btn btn-outline-primary mt-3">Read More</a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <div class="placeholder-message text-center">
+                        <h3>Featured stories coming soon</h3>
+                        <p>We're working on bringing you the best content</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+        margin-bottom: 3rem;
+    }
+    
+    .story-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .story-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .story-card img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+    
+    .story-card-content {
+        padding: 1.5rem;
+    }
+    
+    .story-card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+    
+    .story-card-excerpt {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    
+    .story-card-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: #999;
+    }
+    
+    .category-pill {
+        background: #f8f9fa;
+        color: #495057;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+    
+    .category-pill.news { background: #e3f2fd; color: #1976d2; }
+    .category-pill.sports { background: #e8f5e8; color: #388e3c; }
+    .category-pill.events { background: #fff3e0; color: #f57c00; }
+    
+    .section-divider {
+        border: none;
+        height: 3px;
+        background: linear-gradient(90deg, #1976d2, #388e3c, #f57c00);
+        margin: 4rem 0 3rem;
+        border-radius: 2px;
+    }
+    
+    .section-header-modern {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+        margin: 0;
+        position: relative;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 100%;
+        background: #1976d2;
+        border-radius: 2px;
+    }
+    
+    .section-title.sports::before { background: #388e3c; }
+    .section-title.events::before { background: #f57c00; }
+    
+    .view-all-btn {
+        background: transparent;
+        border: 2px solid #1976d2;
+        color: #1976d2;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .view-all-btn:hover {
+        background: #1976d2;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .view-all-btn.sports {
+        border-color: #388e3c;
+        color: #388e3c;
+    }
+    
+    .view-all-btn.sports:hover {
+        background: #388e3c;
+        color: white;
+    }
+    
+    .view-all-btn.events {
+        border-color: #f57c00;
+        color: #f57c00;
+    }
+    
+    .view-all-btn.events:hover {
+        background: #f57c00;
+        color: white;
+    }
+    
+    .trending-sidebar {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+    
+    .trending-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #dee2e6;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .trending-item:last-child {
+        border-bottom: none;
+    }
+    
+    .trending-item:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .trending-number {
+        background: #1976d2;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+    
+    .trending-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.3;
+        margin: 0;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 3rem 0;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
+        border-top: 4px solid #1976d2;
+    }
+    
+    .stat-card.sports { border-top-color: #388e3c; }
+    .stat-card.events { border-top-color: #f57c00; }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+    
+    .weather-widget {
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.5rem; }
+        .secondary-stories { grid-template-columns: 1fr; }
+        .main-story { height: 350px; }
+        .main-story-title { font-size: 1.5rem; }
+        .section-title { font-size: 1.5rem; }
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+    <!-- Breaking News -->
+    <div class="breaking-news">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <span class="breaking-news-label">BREAKING</span>
+                <div class="ticker-content">
+                    {% if featured_news %}
+                        {% for article in featured_news|slice:":3" %}
+                            <span class="me-4">{{ article.title }} •</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="me-4">Stay tuned for the latest updates • Breaking news coming soon • More updates to follow •</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8 hero-content">
+                    <h1 class="hero-title">Stay Informed, Stay Connected</h1>
+                    <p class="hero-subtitle">Your premier destination for breaking news, sports updates, and exclusive event coverage.</p>
+                    <div class="d-flex gap-3">
+                        <a href="{% url 'news:list' %}" class="btn btn-light btn-lg px-4">
+                            <i class="bi bi-newspaper me-2"></i>Latest News
+                        </a>
+                        <a href="{% url 'events:event_list' %}" class="btn btn-outline-light btn-lg px-4">
+                            <i class="bi bi-calendar3 me-2"></i>Live Events
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="weather-widget">
+                        <h5 class="mb-3"><i class="bi bi-cloud-sun me-2"></i>Today's Weather</h5>
+                        <div class="h2 mb-2">22°C</div>
+                        <p class="mb-0">Partly Cloudy • {% now "l, F j, Y" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Main News Section -->
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Featured Main Story -->
+                {% if featured_news %}
+                    {% with featured_news.0 as main_story %}
+                    <a href="{{ main_story.get_absolute_url }}" class="main-story text-decoration-none">
+                        {% if main_story.featured_image %}
+                            <img src="{{ main_story.featured_image.url }}" alt="{{ main_story.title }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1586339949216-35c2747d8b9e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=500" alt="News">
+                        {% endif %}
+                        <div class="main-story-overlay">
+                            <div class="main-story-meta">
+                                <span class="category-pill news">{{ main_story.category.name }}</span>
+                                <span><i class="bi bi-clock me-1"></i>{{ main_story.publish_date|timesince }} ago</span>
+                                <span><i class="bi bi-eye me-1"></i>{{ main_story.views_count }} views</span>
+                            </div>
+                            <h2 class="main-story-title">{{ main_story.title }}</h2>
+                            <p class="mb-0">{{ main_story.excerpt|default:main_story.content|truncatewords:25 }}</p>
+                        </div>
+                    </a>
+                    {% endwith %}
+                {% endif %}
+
+                <!-- Secondary Stories -->
+                <div class="secondary-stories">
+                    {% for article in featured_news|slice:"1:5" %}
+                    <a href="{{ article.get_absolute_url }}" class="story-card">
+                        {% if article.featured_image %}
+                            <img src="{{ article.featured_image.url }}" alt="{{ article.title }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" alt="News">
+                        {% endif %}
+                        <div class="story-card-content">
+                            <h3 class="story-card-title">{{ article.title }}</h3>
+                            <p class="story-card-excerpt">{{ article.excerpt|default:article.content|truncatewords:15 }}</p>
+                            <div class="story-card-meta">
+                                <span class="category-pill news">{{ article.category.name }}</span>
+                                <span>{{ article.publish_date|timesince }} ago</span>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Trending Stories -->
+                <div class="trending-sidebar">
+                    <h4 class="fw-bold mb-3">
+                        <i class="bi bi-fire text-danger me-2"></i>Trending Now
+                    </h4>
+                    {% for article in featured_news|slice:":5" %}
+                    <a href="{{ article.get_absolute_url }}" class="trending-item">
+                        <div class="trending-number">{{ forloop.counter }}</div>
+                        <h6 class="trending-title">{{ article.title|truncatewords:8 }}</h6>
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ featured_news|length|default:"0" }}</div>
+                        <div class="stat-label">News Articles</div>
+                    </div>
+                    <div class="stat-card sports">
+                        <div class="stat-number">{{ sports_features|length|default:"0" }}</div>
+                        <div class="stat-label">Sports Updates</div>
+                    </div>
+                    <div class="stat-card events">
+                        <div class="stat-number">{{ upcoming_events|length|default:"0" }}</div>
+                        <div class="stat-label">Live Events</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Divider -->
+        <hr class="section-divider">
+
+        <!-- Sports Section -->
+        <div class="section-header-modern">
+            <h2 class="section-title sports">Sports Central</h2>
+            <a href="{% url 'sports:sport_list' %}" class="view-all-btn sports">
+                <i class="bi bi-trophy"></i>View All Sports
+            </a>
+        </div>
+
+        <div class="row g-4 mb-5">
+            {% for feature in sports_features|slice:":3" %}
+            <div class="col-md-4">
+                <a href="{% if feature.link %}{{ feature.link }}{% else %}{% url 'home:feature_detail' feature.id %}{% endif %}" class="story-card">
+                    {% if feature.image %}
+                        <img src="{{ feature.image.url }}" alt="{{ feature.title }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" alt="Sports">
+                    {% endif %}
+                    <div class="story-card-content">
+                        <h3 class="story-card-title">{{ feature.title }}</h3>
+                        <p class="story-card-excerpt">{{ feature.description|truncatewords:15 }}</p>
+                        <div class="story-card-meta">
+                            <span class="category-pill sports">Sports</span>
+                            <span>Featured</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="bi bi-trophy fs-1 text-muted mb-3"></i>
+                    <h4 class="text-muted">No Sports Updates Available</h4>
+                    <p class="text-muted">Check back soon for the latest sports news and updates.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Events Section -->
+        <div class="section-header-modern">
+            <h2 class="section-title events">Live Events</h2>
+            <a href="{% url 'events:event_list' %}" class="view-all-btn events">
+                <i class="bi bi-calendar3"></i>View All Events
+            </a>
+        </div>
+
+        <div class="row g-4 mb-5">
+            {% for event in upcoming_events|slice:":3" %}
+            <div class="col-md-4">
+                <a href="{% url 'events:event_detail' event.slug %}" class="story-card">
+                    {% if event.banner_image %}
+                        <img src="{{ event.banner_image.url }}" alt="{{ event.title }}">
+                    {% elif event.banner_image_url %}
+                        <img src="{{ event.banner_image_url }}" alt="{{ event.title }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200" alt="Event">
+                    {% endif %}
+                    <div class="story-card-content">
+                        <h3 class="story-card-title">{{ event.title }}</h3>
+                        <p class="story-card-excerpt">{{ event.description|truncatewords:15 }}</p>
+                        <div class="story-card-meta">
+                            <span class="category-pill events">
+                                <i class="bi bi-calendar-event me-1"></i>{{ event.date|date:"M d" }}
+                            </span>
+                            <span>
+                                <i class="bi bi-geo-alt me-1"></i>{{ event.venue_name|truncatewords:2 }}
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="bi bi-calendar-x fs-1 text-muted mb-3"></i>
+                    <h4 class="text-muted">No Upcoming Events</h4>
+                    <p class="text-muted">Stay tuned for exciting events and announcements.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

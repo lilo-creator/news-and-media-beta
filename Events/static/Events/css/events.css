@@ -1,0 +1,170 @@
+/* Events App Styles */
+
+/* Event Detail Banner Placeholder */
+.event-detail-banner-placeholder {
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.event-detail-banner-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+}
+
+.placeholder-overlay {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    padding: 2rem;
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.placeholder-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.placeholder-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Event Banner Placeholder for Related Events */
+.event-banner-placeholder {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(45deg, #ff6b6b, #ffa726);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.event-banner-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.1) 10px,
+        transparent 10px,
+        transparent 20px
+    );
+}
+
+.placeholder-mini-content {
+    text-align: center;
+    color: white;
+    z-index: 2;
+    position: relative;
+}
+
+.placeholder-mini-content i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.placeholder-mini-content span {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Event Detail Banner (both real and placeholder) */
+.event-detail-banner,
+.event-detail-banner-placeholder {
+    width: 100%;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-detail-banner {
+    height: 400px;
+    object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .event-detail-banner-placeholder {
+        height: 250px;
+    }
+    
+    .placeholder-title {
+        font-size: 1.8rem;
+    }
+    
+    .placeholder-subtitle {
+        font-size: 1rem;
+    }
+    
+    .placeholder-icon {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .event-detail-banner-placeholder {
+        height: 200px;
+    }
+    
+    .placeholder-title {
+        font-size: 1.4rem;
+    }
+    
+    .placeholder-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .placeholder-icon {
+        font-size: 2.5rem;
+    }
+}
+
+/* Alternative gradient themes for variety */
+.event-detail-banner-placeholder.theme-sunset {
+    background: linear-gradient(135deg, #ff9a56 0%, #ff6b9d 100%);
+}
+
+.event-detail-banner-placeholder.theme-ocean {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.event-detail-banner-placeholder.theme-forest {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+}
+
+.event-detail-banner-placeholder.theme-tech {
+    background: linear-gradient(135deg, #667db6 0%, #0082c8 100%);
+}

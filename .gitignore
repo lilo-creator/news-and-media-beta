@@ -5,3 +5,4 @@ __pycache__/
 staticfiles
 # Ignore Django admin static vendor files
 staticfiles/admin/js/vendor/
+.vscode/

@@ -22,7 +22,7 @@ class NewsListView(ListView):
             queryset = queryset.filter(
                 Q(title__icontains=search) |
                 Q(content__icontains=search) |
-                Q(summary__icontains=search)
+                Q(excerpt__icontains=search)
             )
         
         return queryset.filter(status='published')

@@ -53,6 +53,7 @@ class Article(models.Model):
     tags = models.ManyToManyField(Tag, blank=True, related_name='articles')
     
     featured_image = models.ImageField(upload_to='news_images/%Y/%m/%d/', blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='news_thumbnails/%Y/%m/%d/', blank=True, null=True)
     excerpt = models.TextField(blank=True, max_length=500)
     content = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
@@ -75,6 +76,7 @@ class Article(models.Model):
             self.publish_date.day,
             self.slug
         ])
+
     featured = models.BooleanField(default=False, help_text="Display this article on the home page")
     reading_time = models.PositiveIntegerField(default=0, help_text="Estimated reading time in minutes")
     likes_count = models.PositiveIntegerField(default=0)

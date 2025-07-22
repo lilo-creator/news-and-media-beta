@@ -22,10 +22,11 @@ class NewsListView(ListView):
             queryset = queryset.filter(
                 Q(title__icontains=search) |
                 Q(content__icontains=search) |
-                Q(summary__icontains=search)
+                Q(excerpt__icontains=search)
             )
         
-        return queryset.filter(status='published')
+        # Temporarily show all articles for debugging
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

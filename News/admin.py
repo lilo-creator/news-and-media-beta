@@ -5,7 +5,7 @@ from .models import Article, Category, Tag, Comment
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'category', 'status',
-                    'featured', 'publish_date', 'views_count')
+                    'featured', 'publish_date', 'view_count')
     list_filter = ('status', 'category', 'featured', 'publish_date', 'author')
     search_fields = ('title', 'content', 'excerpt')
     prepopulated_fields = {'slug': ('title',)}
@@ -19,7 +19,7 @@ class ArticleAdmin(admin.ModelAdmin):
             'fields': ('status', 'category', 'tags', 'featured', 'publish_date')
         }),
         ('Statistics', {
-            'fields': ('views_count',),
+            'fields': ('view_count',),
             'classes': ('collapse',)
         })
     )

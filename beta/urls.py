@@ -25,6 +25,7 @@ urlpatterns = [
     path('news/', include('News.urls', namespace='news')),
     path('sports/', include('Sports.urls', namespace='sports')),
     path('events/', include('Events.urls', namespace='events')),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
 ]
 
 # Serve media files in development

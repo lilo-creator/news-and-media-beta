@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ team.name }}</h1>
+{% if team.logo %}<img src="{{ team.logo.url }}" alt="{{ team.name }} logo" style="max-width:200px;"/>{% endif %}
+<p>{{ team.description }}</p>
+<h2>Players</h2>
+<ul>
+  {% for player in team.players.all %}
+    <li><a href="{% url 'Sports:player_detail' player.id %}">{{ player.first_name }} {{ player.last_name }}</a></li>
+  {% endfor %}
+</ul>
+<h2>Matches</h2>
+<ul>
+  {% for match in team.home_matches.all|chain:team.away_matches.all %}
+    <li><a href="{% url 'Sports:match_detail' match.id %}">{{ match }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

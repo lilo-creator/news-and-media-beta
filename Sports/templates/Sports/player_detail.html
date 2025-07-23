@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ player.first_name }} {{ player.last_name }}</h1>
+{% if player.photo %}<img src="{{ player.photo.url }}" alt="{{ player.first_name }} {{ player.last_name }} photo" style="max-width:200px;"/>{% endif %}
+<p>Team: <a href="{% url 'Sports:team_detail' player.team.id %}">{{ player.team.name }}</a></p>
+<p>Jersey Number: {{ player.jersey_number }}</p>
+<p>Position: {{ player.position }}</p>
+<p>Age: {{ player.age }}</p>
+<p>{{ player.bio }}</p>
+{% endblock %}

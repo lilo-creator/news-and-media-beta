@@ -1,0 +1,287 @@
+{% extends "../base.html" %}
+
+{% block title %}Home - Your Source for News, Sports & Events{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        padding: 2rem 0;
+        margin-bottom: 3rem;
+        color: white;
+    }
+
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        min-height: 60vh;
+    }
+
+    .hero-featured {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        border-radius: 1rem;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+        background-color: #1e3c72;
+    }
+
+    .hero-featured::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 70%;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    }
+
+    .hero-content {
+        position: relative;
+        padding: 2rem;
+        color: white;
+        width: 100%;
+    }
+
+    .hero-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .trending-item {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        border: 1px solid #e9ecef;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .trending-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .breaking-news {
+        background: #dc3545;
+        color: white;
+        padding: 0.75rem 0;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .breaking-news-label {
+        background: #fff;
+        color: #dc3545;
+        padding: 0.25rem 0.75rem;
+        font-weight: bold;
+        font-size: 0.875rem;
+        margin-right: 1rem;
+    }
+
+    .ticker-content {
+        display: flex;
+        animation: scroll 30s linear infinite;
+    }
+
+    @keyframes scroll {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+
+    .featured-section {
+        padding: 3rem 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: #e9ecef;
+    }
+
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .news-card {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .news-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .news-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .news-content {
+        padding: 1.5rem;
+    }
+
+    .news-category {
+        color: #3498db;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+    }
+
+    .news-title {
+        margin: 0.5rem 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .news-excerpt {
+        color: #666;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .news-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.875rem;
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
+        .hero-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .news-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Breaking News -->
+    <div class="breaking-news">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <span class="breaking-news-label">BREAKING</span>
+                <div class="ticker-content">
+                    {% if featured_news %}
+                        {% for article in featured_news|slice:":3" %}
+                            <span class="me-4">{{ article.title }} •</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="me-4">Stay tuned for the latest updates • Breaking news coming soon • More updates to follow •</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-main">
+                    {% if main_story %}
+                        <article class="hero-featured" style="background-image: url('{{ main_story.featured_image.url }}')">
+                            <div class="hero-content">
+                                <span class="category">{{ main_story.category }}</span>
+                                <h1>{{ main_story.title }}</h1>
+                                <p>{{ main_story.excerpt }}</p>
+                                <a href="#" class="btn btn-primary">Read More</a>
+                            </div>
+                        </article>
+                    {% else %}
+                        <article class="hero-featured">
+                            <div class="hero-content">
+                                <h1>Welcome to News & Media</h1>
+                                <p>Your trusted source for the latest news and insights from around the world.</p>
+                                <a href="#" class="btn btn-primary">Browse Stories</a>
+                            </div>
+                        </article>
+                    {% endif %}
+                </div>
+                <div class="hero-sidebar">
+                    {% if trending_stories %}
+                        {% for story in trending_stories|slice:":3" %}
+                            <article class="trending-item">
+                                <div class="trending-content">
+                                    <span class="category">{{ story.category }}</span>
+                                    <h3>{{ story.title }}</h3>
+                                    <span class="time">{{ story.created|timesince }} ago</span>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    {% else %}
+                        <div class="trending-placeholder">
+                            <h3>Trending stories coming soon</h3>
+                            <p>Stay tuned for the latest updates</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured News Section -->
+    <section class="featured-section">
+        <div class="container">
+            <h2 class="section-title">Featured Stories</h2>
+            <div class="news-grid">
+                {% if featured_stories %}
+                    {% for story in featured_stories %}
+                        <article class="news-card">
+                            {% if story.featured_image %}
+                                <img src="{{ story.featured_image.url }}" alt="{{ story.title }}" class="news-image">
+                            {% endif %}
+                            <div class="news-content">
+                                <span class="news-category">{{ story.category }}</span>
+                                <h3 class="news-title">{{ story.title }}</h3>
+                                <p class="news-excerpt">{{ story.excerpt }}</p>
+                                <div class="news-meta">
+                                    <span>{{ story.author }}</span>
+                                    <span>•</span>
+                                    <span>{{ story.created|timesince }} ago</span>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary mt-3">Read More</a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <div class="placeholder-message text-center col-12">
+                        <h3>Featured stories coming soon</h3>
+                        <p>We're working on bringing you the best content</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

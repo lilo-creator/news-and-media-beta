@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Sports</h1>
+<ul>
+  {% for sport in sports %}
+    <li><a href="{% url 'Sports:sport_detail' sport.id %}">{{ sport.name }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

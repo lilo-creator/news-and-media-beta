@@ -11,6 +11,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+# Try to import decouple for environment variables
+try:
+    from decouple import config
+except ImportError:
+    # Fallback if decouple is not installed
+    def config(key, default=None):
+        return os.environ.get(key, default)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +50,7 @@ INSTALLED_APPS = [
     'News',
     'Sports',
     'Events',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +137,46 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Media files (User-uploaded files)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email configuration with detailed logging
+EMAIL_BACKEND = 'accounts.email_backend.LoggingEmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'mwaraa6@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'fjtyovfrrknasdxe'  # Your Gmail App Password (remove any spaces)
+DEFAULT_FROM_EMAIL = 'mwaraa6@gmail.com'
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.mail': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}
+
+# Authentication settings
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# Email verification
+EMAIL_VERIFICATION_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+VERIFICATION_REDIRECT_URL = '/accounts/verify-email-required/'

@@ -6,3 +6,20 @@ staticfiles
 # Ignore Django admin static vendor files
 staticfiles/admin/js/vendor/
 .vscode/
+
+# Environment variables and sensitive data
+.env
+.env.local
+.env.production
+*.env
+
+# Media files (user uploads)
+media/
+
+# IDE files
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log

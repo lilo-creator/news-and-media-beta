@@ -1,0 +1,41 @@
+{% extends 'accounts/base_auth.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-header">
+    <h2><i class="fas fa-sign-in-alt"></i> Welcome Back</h2>
+    <p>Sign in to your account to continue</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    
+    {{ form.username }}
+    {% if form.username.errors %}
+        <div class="text-danger small mb-3">{{ form.username.errors.0 }}</div>
+    {% endif %}
+    
+    {{ form.password }}
+    {% if form.password.errors %}
+        <div class="text-danger small mb-3">{{ form.password.errors.0 }}</div>
+    {% endif %}
+    
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors.0 }}
+        </div>
+    {% endif %}
+    
+    <button type="submit" class="btn btn-auth">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+    </button>
+</form>
+
+<div class="auth-links">
+    <p><a href="{% url 'accounts:password_reset' %}">Forgot your password?</a></p>
+    <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+    <p><a href="{% url 'accounts:resend_verification' %}">Resend verification email</a></p>
+    <p><a href="{% url 'home:home' %}">← Back to Home</a></p>
+</div>
+{% endblock %}

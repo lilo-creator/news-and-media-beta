@@ -12,14 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
-# Try to import decouple for environment variables
-try:
-    from decouple import config
-except ImportError:
-    # Fallback if decouple is not installed
-    def config(key, default=None):
-        return os.environ.get(key, default)
+# Load environment variables from .env file
+load_dotenv(os.path.join(Path(__file__).resolve().parent.parent, '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -144,15 +140,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email configuration with detailed logging
-EMAIL_BACKEND = 'accounts.email_backend.LoggingEmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mwaraa6@gmail.com'  # Your Gmail address
-EMAIL_HOST_PASSWORD = 'fjtyovfrrknasdxe'  # Your Gmail App Password (remove any spaces)
-DEFAULT_FROM_EMAIL = 'mwaraa6@gmail.com'
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ['true', '1', 'yes']
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')  # Your Gmail address
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')  # Your Gmail App Password
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 
-# Logging configuration
+# Logging dotenvuration
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

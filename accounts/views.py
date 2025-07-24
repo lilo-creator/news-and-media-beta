@@ -113,27 +113,25 @@ def register_view(request):
             })
             plain_message = strip_tags(html_message)
 
-            try:
-                # Send verification email
-                send_mail(
-                    subject,
-                    plain_message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [user.email],
-                    html_message=html_message,
-                    fail_silently=False,
-                )
-                # Email sent successfully
-                login(request, user)
-                messages.success(request, 'Registration successful! Please check your email to verify your account.')
-                return redirect('accounts:verify_email_required')
-            except Exception as e:
-                messages.warning(
-                    request,
-                    f'Account created but failed to send verification email. Error: {str(e)}'
-                )
-                login(request, user)
-                return redirect('accounts:verify_email_required')
+            import threading
+            def send_verification_email():
+                try:
+                    send_mail(
+                        subject,
+                        plain_message,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [user.email],
+                        html_message=html_message,
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    # Optionally log error
+                    pass
+
+            threading.Thread(target=send_verification_email).start()
+            login(request, user)
+            messages.success(request, 'Registration successful! Please check your email to verify your account. (Email is being sent...)')
+            return redirect('accounts:verify_email_required')
     else:
         form = CustomUserCreationForm()
     

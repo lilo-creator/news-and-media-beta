@@ -32,7 +32,7 @@
                         <li>Click the button below to send a new verification email</li>
                     </ul>
 
-                    <form method="post" action="{% url 'resend_verification' %}" class="mt-4">
+                    <form method="post" action="{% url 'accounts:resend_verification' %}" class="mt-4">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-envelope"></i> Resend Verification Email
@@ -41,7 +41,7 @@
 
                     <div class="mt-4">
                         <p>Wrong email address? You can:</p>
-                        <a href="{% url 'logout' %}" class="btn btn-outline-secondary">
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-outline-secondary">
                             <i class="fas fa-sign-out-alt"></i> Logout and Register with Different Email
                         </a>
                     </div>

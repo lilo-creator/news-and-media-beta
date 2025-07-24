@@ -200,19 +200,65 @@ def verify_email(request, token):
 
 def resend_verification(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
-        try:
-            user = User.objects.get(email=email)
-            email_verification, created = EmailVerification.objects.get_or_create(user=user)
+        if request.user.is_authenticated:
+            # User is logged in, use their email
+            user = request.user
+        else:
+            # User is not logged in, get email from form
+            email = request.POST.get('email')
+            if not email:
+                messages.error(request, 'Please provide an email address.')
+                return render(request, 'accounts/resend_verification.html')
             
-            if not email_verification.is_verified:
-                send_verification_email(request, user, email_verification.token)
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                messages.error(request, 'No user found with this email address.')
+                return render(request, 'accounts/resend_verification.html')
+        
+        # Get or create email verification record
+        email_verification, created = EmailVerification.objects.get_or_create(user=user)
+        
+        if not email_verification.is_verified:
+            # Generate new token if needed
+            if not email_verification.token:
+                email_verification.token = str(uuid.uuid4())
+                email_verification.save()
+            
+            # Build the verification URL
+            verification_url = request.build_absolute_uri(
+                reverse('accounts:verify_email', args=[email_verification.token])
+            )
+
+            # Prepare and send verification email
+            subject = 'Verify Your Email - News & Media Site'
+            html_message = render_to_string('accounts/email/verify_email.html', {
+                'user': user,
+                'verify_url': verification_url,
+            })
+            plain_message = strip_tags(html_message)
+
+            try:
+                send_mail(
+                    subject,
+                    plain_message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email],
+                    html_message=html_message,
+                    fail_silently=False,
+                )
                 messages.success(request, 'Verification email sent! Please check your email.')
-            else:
-                messages.info(request, 'Your email is already verified.')
                 
-        except User.DoesNotExist:
-            messages.error(request, 'No user found with this email address.')
+                # If user is authenticated, redirect back to verification required page
+                if request.user.is_authenticated:
+                    return redirect('accounts:verify_email_required')
+                    
+            except Exception as e:
+                messages.error(request, 'Failed to send verification email. Please try again later.')
+        else:
+            messages.info(request, 'Your email is already verified.')
+            if request.user.is_authenticated:
+                return redirect('home:home')
     
     return render(request, 'accounts/resend_verification.html')
 

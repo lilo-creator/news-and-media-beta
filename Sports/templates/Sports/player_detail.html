@@ -7,4 +7,13 @@
 <p>Position: {{ player.position }}</p>
 <p>Age: {{ player.age }}</p>
 <p>{{ player.bio }}</p>
+<hr>
+<section style="background:#f5f5f5; padding:20px; border-radius:8px; margin-top:30px;">
+  <h2>Sports News</h2>
+  <ul style="list-style:disc; margin-left:20px;">
+    <li><a href="{% url 'sports:match_detail' player.team.home_matches.first.id %}">Latest Match Details</a> – See the latest match for {{ player.team.name }}.</li>
+    <li><a href="{% url 'sports:sport_list' %}">All Sports</a> – Browse all sports covered on this site.</li>
+    <li><a href="{% url 'sports:player_detail' player.id %}">Player Profile</a> – Detailed stats and bio for {{ player.first_name }} {{ player.last_name }}.</li>
+  </ul>
+</section>
 {% endblock %}

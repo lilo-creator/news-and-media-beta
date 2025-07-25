@@ -1,0 +1,52 @@
+[
+  {
+    "model": "Sports.sport",
+    "pk": 1,
+    "fields": {
+      "name": "Football",
+      "description": "A team sport played between two teams of eleven players with a spherical ball.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.sport",
+    "pk": 2,
+    "fields": {
+      "name": "Basketball",
+      "description": "A team sport in which two teams, most commonly of five players each, oppose each other on a rectangular court.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.sport",
+    "pk": 3,
+    "fields": {
+      "name": " wrestling",
+      "description": "A racket sport that can be played individually against a single opponent or between two teams of two players each.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.sport",
+    "pk": 4,
+    "fields": {
+      "name": "Volleyball",
+      "description": "A team sport in which two teams of six players are separated by a net.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.sport",
+    "pk": 5,
+    "fields": {
+      "name": "Rugby",
+      "description": "A team sport played with an oval-shaped ball by two teams of 15 players.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  }
+]

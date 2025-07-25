@@ -1,11 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ match.home_team }} vs {{ match.away_team }}</h1>
-<p>Date: {{ match.match_date }}</p>
-<p>Venue: {{ match.venue }}</p>
-<p>Status: {{ match.get_status_display }}</p>
-{% if match.status == 'completed' %}
-<p>Score: {{ match.home_score }} - {{ match.away_score }}</p>
-{% endif %}
-<p>{{ match.summary }}</p>
+<article style="background:#f8f9fa; padding:28px; border-radius:12px; margin-bottom:24px;">
+  <header style="margin-bottom:18px;">
+    <h1 style="margin-bottom:8px;">{{ match.home_team|default:'Home Team' }} vs {{ match.away_team|default:'Away Team' }}</h1>
+    <p style="color:#555;">Date: {{ match.match_date|date:'F j, Y'|default:'TBD' }} | Venue: {{ match.venue|default:'TBD' }}</p>
+    <p>Status: {{ match.get_status_display|default:'Unknown' }}</p>
+    {% if match.status == 'completed' %}
+      <p style="font-weight:bold;">Score: {{ match.home_score|default:'-' }} - {{ match.away_score|default:'-' }}</p>
+    {% endif %}
+  </header>
+  <section style="margin-bottom:20px;">
+    <h2 style="font-size:1.3em; color:#007bff;">Match Summary</h2>
+    <p>{{ match.summary|default:'No summary available for this match.' }}</p>
+  </section>
+  <hr>
+  <section style="margin-top:20px;">
+    <h2 style="font-size:1.2em; color:#007bff;">About the Sport</h2>
+    <p>
+      {% if match.sport %}
+        <strong>Sport:</strong> {{ match.sport.name|default:'N/A' }}<br>
+        {% if match.sport.description %}
+          {{ match.sport.description }}
+        {% else %}
+          No additional details about this sport are available.
+        {% endif %}
+      {% else %}
+        Sport details are not available for this match.
+      {% endif %}
+    </p>
+  </section>
+</article>
 {% endblock %}

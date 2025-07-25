@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="background:#fff; border:1px solid #ddd; border-radius:10px; margin:40px auto; max-width:700px; padding:32px;">
+  <img src="{{ image_url }}" alt="{{ sport|title }}" style="max-width:100%; max-height:300px; border-radius:12px; object-fit:cover; margin-bottom:20px;"/>
+  <h1 style="color:#007bff; margin-bottom:12px;">{{ sport|title }}</h1>
+  <p style="font-size:1.2em; color:#444; margin-bottom:24px;">{{ headline }}</p>
+  <div style="color:#333; font-size:1.1em;">
+    {{ article|safe }}
+  </div>
+  <a href="/sports/" style="display:inline-block; margin-top:30px; color:#007bff; text-decoration:underline;">&larr; Back to Sports News</a>
+</div>
+{% endblock %}

@@ -1,11 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>{{ sport.name }}</h1>
-<p>{{ sport.description }}</p>
-<h2>Teams</h2>
-<ul>
-  {% for team in sport.teams.all %}
-    <li><a href="{% url 'Sports:team_detail' team.id %}">{{ team.name }}</a></li>
-  {% endfor %}
-</ul>
+<div style="background:#e9ecef; padding:24px; border-radius:10px; margin-bottom:20px;margin-top:100px;">
+  {% if sport.image %}
+    <img src="{{ sport.image.url }}" alt="{{ sport.name }} image" style="max-width:100%; max-height:320px; border-radius:14px; display:block; margin-bottom:18px; object-fit:cover;"/>
+  {% endif %}
+  <h1>{{ sport.name }}</h1>
+  <p>{{ sport.description }}</p>
+{% if sport.name|lower == 'football' %}
+  <h3>Featured Matchup: Manchester City vs Arsenal</h3>
+  <img src="/static/football_mancity_arsenal.jpg" alt="Manchester City vs Arsenal" style="max-width:400px;"/>
+  <p>Manchester City and Arsenal are two of the most successful football clubs in England, known for their exciting matches and passionate fanbases.</p>
+{% elif sport.name|lower == 'basketball' %}
+  <h3>Featured Matchup: LA Lakers vs Chicago Bulls</h3>
+  <img src="/static/basketball_lakers_bulls.jpg" alt="Lakers vs Bulls" style="max-width:400px;"/>
+  <p>The LA Lakers and Chicago Bulls are iconic teams in the NBA, with a rich history of legendary players and memorable games.</p>
+{% endif %}
+</div>
 {% endblock %}

@@ -1,0 +1,70 @@
+[
+  {
+    "model": "Sports.sport",
+    "pk": 1,
+    "fields": {
+      "name": "Football",
+      "description": "A team sport played between two teams of eleven players with a spherical ball.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.sport",
+    "pk": 2,
+    "fields": {
+      "name": "Basketball",
+      "description": "A team sport in which two teams, most commonly of five players each, oppose each other on a rectangular court.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.team",
+    "pk": 1,
+    "fields": {
+      "name": "Manchester City",
+      "sport": 1,
+      "founded_year": 1880,
+      "description": "A top English football club based in Manchester.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.team",
+    "pk": 2,
+    "fields": {
+      "name": "Arsenal",
+      "sport": 1,
+      "founded_year": 1886,
+      "description": "A top English football club based in London.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.team",
+    "pk": 3,
+    "fields": {
+      "name": "LA Lakers",
+      "sport": 2,
+      "founded_year": 1947,
+      "description": "A famous NBA basketball team based in Los Angeles.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "Sports.team",
+    "pk": 4,
+    "fields": {
+      "name": "Chicago Bulls",
+      "sport": 2,
+      "founded_year": 1966,
+      "description": "A famous NBA basketball team based in Chicago.",
+      "created_at": "2025-07-24T00:00:00Z",
+      "updated_at": "2025-07-24T00:00:00Z"
+    }
+  }
+]

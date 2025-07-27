@@ -11,49 +11,45 @@ from .forms import EventForm, EventHostForm, EventRegistrationForm
 
 def event_list(request):
     """Display all active events."""
-    events = Event.objects.filter(is_active=True)
+    now = timezone.now().date()
     
-    # Filter by tag
+    # Get all events for general stats
+    all_events = Event.objects.filter(is_active=True).order_by('-date')
+    
+    # Separate events by date
+    upcoming_events = Event.objects.filter(is_active=True, date__gte=now).order_by('date')
+    past_events = Event.objects.filter(is_active=True, date__lt=now).order_by('-date')
+    featured_events = Event.objects.filter(is_featured=True, is_active=True).order_by('-date')
+    
+    # Filter by tag if specified
     tag_slug = request.GET.get('tag')
     if tag_slug:
-        events = events.filter(tags__slug=tag_slug)
+        upcoming_events = upcoming_events.filter(tags__slug=tag_slug)
+        past_events = past_events.filter(tags__slug=tag_slug)
+        featured_events = featured_events.filter(tags__slug=tag_slug)
+        all_events = all_events.filter(tags__slug=tag_slug)
     
-    # Filter upcoming/past events
-    filter_type = request.GET.get('filter')
-    if filter_type == 'upcoming':
-        events = events.filter(date__gte=timezone.now().date())
-    elif filter_type == 'past':
-        events = events.filter(date__lt=timezone.now().date())
-    # For 'all' or no filter, show all events (no additional filtering by date)
-    
-    # Search
+    # Search functionality
     query = request.GET.get('q')
     if query:
-        events = events.filter(
-            Q(title__icontains=query) | 
-            Q(description__icontains=query) |
-            Q(venue_name__icontains=query)
-        )
-    
-    # Pagination
-    paginator = Paginator(events, 12)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    # Get featured events for sidebar
-    featured_events = Event.objects.filter(is_featured=True, is_active=True)[:3]
+        search_filter = Q(title__icontains=query) | Q(description__icontains=query) | Q(venue_name__icontains=query)
+        upcoming_events = upcoming_events.filter(search_filter)
+        past_events = past_events.filter(search_filter)
+        featured_events = featured_events.filter(search_filter)
+        all_events = all_events.filter(search_filter)
     
     # Get all tags for filter
     tags = EventTag.objects.all()
     
     context = {
-        'page_obj': page_obj,
-        'featured_events': featured_events,
+        'upcoming_events': upcoming_events[:12],  # Limit to 12 for performance
+        'past_events': past_events[:12],
+        'featured_events': featured_events[:8],
+        'all_events': all_events[:24],
         'tags': tags,
-        'current_filter': filter_type,
         'current_tag': tag_slug,
         'search_query': query,
-        'total_events': events.count(),
+        'total_events': all_events.count(),
     }
     
     return render(request, 'Events/event_list.html', context)

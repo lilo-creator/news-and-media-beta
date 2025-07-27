@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}Events - News & Media{% endblock %}
+
+{% block extra_css %}
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'primary': '#667eea',
+                    'secondary': '#764ba2',
+                }
+            }
+        }
+    }
+</script>
+<style>
+    .event-card {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .event-card:hover {
+        transform: translateY(-12px) scale(1.02);
+    }
+    .featured-glow {
+        box-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+    }
+    .past-event {
+        filter: grayscale(0.3);
+        opacity: 0.85;
+    }
+    .past-event:hover {
+        filter: grayscale(0);
+        opacity: 1;
+    }
+    .section-divider {
+        background: linear-gradient(90deg, transparent, #667eea, transparent);
+        height: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-primary via-purple-600 to-secondary rounded-3xl mx-4 lg:mx-8 mb-12 mt-4">
+        <!-- Animated Background -->
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute inset-0 bg-white/10 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.4)_1px,transparent_0)] bg-[length:30px_30px] animate-pulse"></div>
+            <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-bounce"></div>
+            <div class="absolute bottom-10 right-10 w-16 h-16 bg-white/10 rounded-full animate-ping"></div>
+        </div>
+        
+        <!-- Hero Content -->
+        <div class="relative z-10 px-8 py-20 lg:py-28 text-center text-white">
+            <div class="flex justify-center items-center mb-8">
+                <div class="bg-white/20 rounded-full p-6 backdrop-blur-sm">
+                    <i class="bi bi-calendar-event text-6xl lg:text-8xl"></i>
+                </div>
+            </div>
+            <h1 class="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+                Unforgettable Events
+            </h1>
+            <p class="text-xl lg:text-2xl mb-10 max-w-4xl mx-auto opacity-90 leading-relaxed">
+                From inspiring conferences to community celebrations, discover events that matter to you. 
+                Connect, learn, and create memories that last a lifetime.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'events:create_event' %}" 
+                       class="inline-flex items-center px-10 py-4 bg-white text-primary font-bold rounded-full text-lg hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+                        <i class="bi bi-plus-circle mr-3 text-xl"></i>
+                        Create Event
+                    </a>
+                {% endif %}
+                <a href="#upcoming-events" 
+                   class="inline-flex items-center px-10 py-4 bg-white/20 backdrop-blur-sm text-white font-bold rounded-full text-lg hover:bg-white/30 transform hover:scale-105 transition-all duration-300 border-2 border-white/30">
+                    <i class="bi bi-calendar-plus mr-3 text-xl"></i>
+                    View Upcoming Events
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="mx-4 lg:mx-8 mb-12">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="text-3xl font-bold text-green-600 mb-2">{{ upcoming_events|length }}</div>
+                <div class="text-gray-600 font-medium">Upcoming Events</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="text-3xl font-bold text-blue-600 mb-2">{{ past_events|length }}</div>
+                <div class="text-gray-600 font-medium">Past Events</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="text-3xl font-bold text-purple-600 mb-2">{{ featured_events|length }}</div>
+                <div class="text-gray-600 font-medium">Featured Events</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="text-3xl font-bold text-orange-600 mb-2">{{ total_events }}</div>
+                <div class="text-gray-600 font-medium">Total Events</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="mx-4 lg:mx-8 mb-8">
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+            <div class="flex flex-wrap justify-center gap-4 mb-6">
+                <button onclick="showSection('upcoming')" id="upcoming-btn" 
+                        class="filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105">
+                    <i class="bi bi-calendar-plus mr-2"></i>Upcoming Events
+                </button>
+                <button onclick="showSection('past')" id="past-btn"
+                        class="filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105">
+                    <i class="bi bi-calendar-check mr-2"></i>Past Events
+                </button>
+                <button onclick="showSection('featured')" id="featured-btn"
+                        class="filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105">
+                    <i class="bi bi-star mr-2"></i>Featured Events
+                </button>
+                <button onclick="showSection('all')" id="all-btn"
+                        class="filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105">
+                    <i class="bi bi-calendar3 mr-2"></i>All Events
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events Section -->
+    <div id="upcoming-events" class="event-section mx-4 lg:mx-8 mb-16">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center bg-green-100 text-green-800 px-6 py-3 rounded-full font-semibold mb-4">
+                <i class="bi bi-calendar-plus mr-2"></i>
+                Coming Soon
+            </div>
+            <h2 class="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">Upcoming Events</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Don't miss out on these exciting upcoming events in your community</p>
+        </div>
+        
+        {% if upcoming_events %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for event in upcoming_events %}
+                    <div class="event-card bg-white rounded-3xl shadow-lg overflow-hidden {% if event.is_featured %}featured-glow{% endif %}">
+                        <!-- Event Image -->
+                        <div class="relative overflow-hidden h-64">
+                            <img src="{{ event.get_banner_image_url }}" alt="{{ event.title }}" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            
+                            <!-- Date Badge -->
+                            <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-xl font-bold text-sm shadow-lg">
+                                {{ event.date|date:"M d" }}
+                            </div>
+                            
+                            <!-- Featured Badge -->
+                            {% if event.is_featured %}
+                                <div class="absolute top-4 left-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full font-bold text-xs shadow-lg">
+                                    <i class="bi bi-star-fill mr-1"></i>FEATURED
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Event Content -->
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                {% for tag in event.tags.all|slice:":2" %}
+                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold" 
+                                          style="background-color: {{ tag.color }}20; color: {{ tag.color }};">
+                                        {{ tag.name }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2">{{ event.title }}</h3>
+                            
+                            <!-- Event Meta -->
+                            <div class="space-y-2 mb-4 text-sm text-gray-600">
+                                <div class="flex items-center">
+                                    <i class="bi bi-calendar3 text-primary w-5 mr-3"></i>
+                                    <span>{{ event.date|date:"F j, Y" }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="bi bi-clock text-primary w-5 mr-3"></i>
+                                    <span>{{ event.time_display }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="bi bi-geo-alt text-primary w-5 mr-3"></i>
+                                    <span class="truncate">{{ event.venue_name }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="bi bi-ticket text-primary w-5 mr-3"></i>
+                                    <span class="font-semibold text-green-600">{{ event.ticket_price }}</span>
+                                </div>
+                            </div>
+                            
+                            <p class="text-gray-600 mb-6 line-clamp-3">{{ event.description|truncatewords:20 }}</p>
+                            
+                            <!-- Action Button -->
+                            <a href="{{ event.get_absolute_url }}" 
+                               class="block w-full text-center bg-gradient-to-r from-primary to-secondary text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                                Learn More <i class="bi bi-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-16">
+                <div class="bg-gray-100 rounded-3xl p-12 max-w-2xl mx-auto">
+                    <i class="bi bi-calendar-x text-6xl text-gray-400 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-600 mb-4">No Upcoming Events</h3>
+                    <p class="text-gray-500 text-lg">Check back soon for exciting new events!</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Section Divider -->
+    <div class="section-divider mx-8 mb-16"></div>
+
+    <!-- Past Events Section -->
+    <div id="past-events" class="event-section mx-4 lg:mx-8 mb-16" style="display: none;">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center bg-blue-100 text-blue-800 px-6 py-3 rounded-full font-semibold mb-4">
+                <i class="bi bi-calendar-check mr-2"></i>
+                Memories Made
+            </div>
+            <h2 class="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">Past Events</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Take a look back at the amazing events we've hosted</p>
+        </div>
+        
+        {% if past_events %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for event in past_events %}
+                    <div class="event-card past-event bg-white rounded-3xl shadow-lg overflow-hidden">
+                        <!-- Event Image -->
+                        <div class="relative overflow-hidden h-64">
+                            <img src="{{ event.get_banner_image_url }}" alt="{{ event.title }}" 
+                                 class="w-full h-full object-cover">
+                            
+                            <!-- Past Event Badge -->
+                            <div class="absolute top-4 right-4 bg-gray-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg">
+                                {{ event.date|date:"M d" }}
+                            </div>
+                            
+                            <!-- Success Badge -->
+                            <div class="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full font-bold text-xs shadow-lg">
+                                <i class="bi bi-check-circle-fill mr-1"></i>COMPLETED
+                            </div>
+                        </div>
+                        
+                        <!-- Event Content -->
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                {% for tag in event.tags.all|slice:":2" %}
+                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+                                        {{ tag.name }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2">{{ event.title }}</h3>
+                            
+                            <!-- Event Meta -->
+                            <div class="space-y-2 mb-4 text-sm text-gray-600">
+                                <div class="flex items-center">
+                                    <i class="bi bi-calendar3 text-gray-400 w-5 mr-3"></i>
+                                    <span>{{ event.date|date:"F j, Y" }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="bi bi-geo-alt text-gray-400 w-5 mr-3"></i>
+                                    <span class="truncate">{{ event.venue_name }}</span>
+                                </div>
+                                {% if event.views_count %}
+                                <div class="flex items-center">
+                                    <i class="bi bi-eye text-gray-400 w-5 mr-3"></i>
+                                    <span>{{ event.views_count }} views</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <p class="text-gray-600 mb-6 line-clamp-3">{{ event.description|truncatewords:20 }}</p>
+                            
+                            <!-- Action Button -->
+                            <a href="{{ event.get_absolute_url }}" 
+                               class="block w-full text-center bg-gray-600 text-white font-bold py-3 px-6 rounded-xl hover:bg-gray-700 transition-all duration-300">
+                                View Details <i class="bi bi-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-16">
+                <div class="bg-gray-100 rounded-3xl p-12 max-w-2xl mx-auto">
+                    <i class="bi bi-calendar-x text-6xl text-gray-400 mb-6"></i>
+                    <h3 class="text-2xl font-bold text-gray-600 mb-4">No Past Events</h3>
+                    <p class="text-gray-500 text-lg">Past events will appear here once they're completed.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Featured Events Section (hidden by default) -->
+    <div id="featured-events" class="event-section mx-4 lg:mx-8 mb-16" style="display: none;">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center bg-yellow-100 text-yellow-800 px-6 py-3 rounded-full font-semibold mb-4">
+                <i class="bi bi-star mr-2"></i>
+                Spotlight
+            </div>
+            <h2 class="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">Featured Events</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Our most popular and highly recommended events</p>
+        </div>
+        
+        {% if featured_events %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {% for event in featured_events %}
+                    <div class="event-card featured-glow bg-white rounded-3xl shadow-xl overflow-hidden">
+                        <!-- Large Featured Event Layout -->
+                        <div class="md:flex">
+                            <div class="md:w-1/2 relative overflow-hidden h-64 md:h-auto">
+                                <img src="{{ event.get_banner_image_url }}" alt="{{ event.title }}" 
+                                     class="w-full h-full object-cover">
+                                
+                                <!-- Featured Badge -->
+                                <div class="absolute top-4 left-4 bg-yellow-400 text-yellow-900 px-4 py-2 rounded-xl font-bold text-sm shadow-lg">
+                                    <i class="bi bi-star-fill mr-1"></i>FEATURED
+                                </div>
+                            </div>
+                            
+                            <div class="md:w-1/2 p-8">
+                                <div class="flex items-center gap-2 mb-4">
+                                    {% for tag in event.tags.all|slice:":3" %}
+                                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold" 
+                                              style="background-color: {{ tag.color }}20; color: {{ tag.color }};">
+                                            {{ tag.name }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                                
+                                <h3 class="text-2xl font-bold text-gray-800 mb-4">{{ event.title }}</h3>
+                                
+                                <div class="space-y-3 mb-6 text-sm text-gray-600">
+                                    <div class="flex items-center">
+                                        <i class="bi bi-calendar3 text-primary w-5 mr-3"></i>
+                                        <span>{{ event.date|date:"F j, Y" }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="bi bi-clock text-primary w-5 mr-3"></i>
+                                        <span>{{ event.time_display }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="bi bi-geo-alt text-primary w-5 mr-3"></i>
+                                        <span>{{ event.venue_name }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="bi bi-ticket text-primary w-5 mr-3"></i>
+                                        <span class="font-semibold text-green-600">{{ event.ticket_price }}</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-gray-600 mb-6">{{ event.description|truncatewords:25 }}</p>
+                                
+                                <a href="{{ event.get_absolute_url }}" 
+                                   class="inline-flex items-center bg-gradient-to-r from-primary to-secondary text-white font-bold py-3 px-8 rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+                                    Learn More <i class="bi bi-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- All Events Section (hidden by default) -->
+    <div id="all-events" class="event-section mx-4 lg:mx-8 mb-16" style="display: none;">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">All Events</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Browse through all our events - past, present, and future</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for event in all_events %}
+                <div class="event-card bg-white rounded-3xl shadow-lg overflow-hidden {% if not event.is_upcoming %}past-event{% endif %} {% if event.is_featured %}featured-glow{% endif %}">
+                    <!-- Simplified event card for all events view -->
+                    <div class="relative overflow-hidden h-48">
+                        <img src="{{ event.get_banner_image_url }}" alt="{{ event.title }}" 
+                             class="w-full h-full object-cover">
+                        
+                        <div class="absolute top-3 right-3 bg-white/90 text-gray-800 px-3 py-1 rounded-lg font-bold text-xs">
+                            {{ event.date|date:"M d" }}
+                        </div>
+                        
+                        {% if event.is_featured %}
+                            <div class="absolute top-3 left-3 bg-yellow-400 text-yellow-900 px-2 py-1 rounded-lg font-bold text-xs">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">{{ event.title }}</h3>
+                        <div class="flex items-center text-sm text-gray-600 mb-3">
+                            <i class="bi bi-geo-alt mr-2"></i>
+                            <span class="truncate">{{ event.venue_name }}</span>
+                        </div>
+                        <a href="{{ event.get_absolute_url }}" 
+                           class="block w-full text-center bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 transition-all duration-300 text-sm">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function showSection(section) {
+    // Hide all sections
+    document.querySelectorAll('.event-section').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // Reset all buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = 'filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105';
+    });
+    
+    // Show selected section and highlight button
+    if (section === 'upcoming') {
+        document.getElementById('upcoming-events').style.display = 'block';
+        document.getElementById('upcoming-btn').className = 'filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105';
+    } else if (section === 'past') {
+        document.getElementById('past-events').style.display = 'block';
+        document.getElementById('past-btn').className = 'filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105';
+    } else if (section === 'featured') {
+        document.getElementById('featured-events').style.display = 'block';
+        document.getElementById('featured-btn').className = 'filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105';
+    } else if (section === 'all') {
+        document.getElementById('all-events').style.display = 'block';
+        document.getElementById('all-btn').className = 'filter-btn px-8 py-3 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gradient-to-r from-primary to-secondary text-white shadow-lg transform scale-105';
+    }
+}
+
+// Smooth scrolling for internal links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// CSS utilities for line clamping
+const style = document.createElement('style');
+style.textContent = `
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

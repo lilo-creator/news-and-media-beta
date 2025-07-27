@@ -1,54 +1,225 @@
 {% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .sports-hero {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        margin-bottom: 3rem;
+        margin-top: 0;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .sports-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+        animation: float 20s infinite linear;
+    }
+    
+    @keyframes float {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    .sport-card {
+        transition: all 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        height: 100%;
+    }
+    
+    .sport-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+    
+    .sport-image {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 0;
+    }
+    
+    .sport-content {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 220px);
+    }
+    
+    .sport-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .sport-description {
+        color: #6c757d;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        flex-grow: 1;
+    }
+    
+    .sport-btn {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        border-radius: 25px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        margin-top: auto;
+    }
+    
+    .sport-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .sports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+    
+    /* Ensure proper footer spacing */
+    .container {
+        padding-bottom: 4rem;
+    }
+    
+    @media (max-width: 768px) {
+        .sports-hero {
+            padding: 2rem 1rem;
+        }
+        
+        .sports-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .sport-image {
+            height: 200px;
+        }
+        
+        .sport-content {
+            padding: 1.5rem;
+        }
+        
+        .container {
+            padding-bottom: 3rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="background:#e9ecef; padding:24px; border-radius:10px; margin-bottom:20px;margin-top:100px;">
-  <h1 style="margin-bottom:10px;">Sports News</h1>
+<div class="container">
+    <!-- Hero Section -->
+    <div class="sports-hero text-center">
+        <h1 class="display-4 fw-bold mb-3">Sports News</h1>
+        <p class="lead">Catch up on the latest from your favorite sports. Click a headline to read more about each sport, its teams, and top matches.</p>
+    </div>
 
-  <p style="font-size:1.1em; color:#555;">Catch up on the latest from your favorite sports. Click a headline to read more about each sport, its teams, and top matches.</p>
+    <!-- Sports Grid -->
+    <div class="sports-grid">
+        <!-- Football -->
+        <div class="sport-card">
+            <img src="https://resources.premierleague.pulselive.com/photo-resources/2025/07/17/a3bb7df8-7c88-4b27-8cbe-2394dfdcbfc8/Haaland-Maguire.jpg?width=1440" 
+                 alt="Football" class="sport-image"/>
+            <div class="sport-content">
+                <h2 class="sport-title">Football</h2>
+                <p class="sport-description">Fixture amendments for Premier League matches in September. Stay updated with the latest transfers, match results, and player statistics from the world's most popular sport.</p>
+                <a href="/sports/article/football" class="sport-btn">
+                    Read more <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Basketball -->
+        <div class="sport-card">
+            <img src="https://pbs.twimg.com/media/GwfIdbtXoAAOoi1?format=jpg&name=900x900" 
+                 alt="Basketball" class="sport-image"/>
+            <div class="sport-content">
+                <h2 class="sport-title">Basketball</h2>
+                <p class="sport-description">The LA Lakers and Chicago Bulls are set to face off in a highly anticipated NBA showdown this weekend. Follow the latest scores and highlights.</p>
+                <a href="/sports/article/basketball" class="sport-btn">
+                    Read more <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Wrestling -->
+        <div class="sport-card">
+            <img src="https://static0.thesportsterimages.com/wordpress/wp-content/uploads/wm/2025/01/26-of-the-most-outrageous-lies-tall-tales-hulk-hogan-has-said.jpg" 
+                 alt="Wrestling" class="sport-image"/>
+            <div class="sport-content">
+                <h2 class="sport-title">Wrestling</h2>
+                <p class="sport-description">Wrestling legends and upcoming championship matches that are making headlines. Get the latest updates from WWE, AEW, and other major wrestling promotions.</p>
+                <a href="/sports/article/wrestling" class="sport-btn">
+                    Read more <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Volleyball -->
+        <div class="sport-card">
+            <img src="https://i0.wp.com/dailysport.co.ke/wp-content/uploads/2019/09/GSU-vs-KDF-volleyball-in-Laikipia.jpg?resize=1042%2C642&ssl=1" 
+                 alt="Volleyball" class="sport-image"/>
+            <div class="sport-content">
+                <h2 class="sport-title">Volleyball</h2>
+                <p class="sport-description">Kenya's national team advances to the finals after a stunning victory in the African Championship. Follow international and domestic volleyball competitions.</p>
+                <a href="/sports/article/volleyball" class="sport-btn">
+                    Read more <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Rugby -->
+        <div class="sport-card">
+            <img src="https://eu-cdn.rugbypass.com/webp-images/wp/wp-content/uploads/2025/07/Rieko-Ioane-Scott-Robertson-All-Blacks-vs-France-2025-1024x576.jpg.webp?maxw=766&comp=95" 
+                 alt="Rugby" class="sport-image"/>
+            <div class="sport-content">
+                <h2 class="sport-title">Rugby</h2>
+                <p class="sport-description">The Rugby World Cup qualifiers heat up as top teams battle for a spot in the tournament. Follow the latest matches and team rankings.</p>
+                <a href="/sports/article/rugby" class="sport-btn">
+                    Read more <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tennis -->
+        <div class="sport-card">
+            <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&h=600&fit=crop" 
+                 alt="Tennis" class="sport-image"/>
+            <div class="sport-content">
+                <h2 class="sport-title">Tennis</h2>
+                <p class="sport-description">Follow the latest from Grand Slam tournaments, ATP and WTA tours. Get updates on your favorite players and upcoming tennis events worldwide.</p>
+                <a href="/sports/article/tennis" class="sport-btn">
+                    Read more <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div>
-  <div style="background:#fff; border:1px solid #ddd; border-radius:8px; margin-bottom:16px; padding:16px; display:flex; align-items:center; gap:20px;">
-    <img src="https://resources.premierleague.pulselive.com/photo-resources/2025/07/17/a3bb7df8-7c88-4b27-8cbe-2394dfdcbfc8/Haaland-Maguire.jpg?width=1440" alt="Football" style="max-width:180px; max-height:180px; border-radius:12px; object-fit:cover;"/>
-    <div>
-      <h2 style="margin:0 0 8px 0; color:#007bff;">Football</h2> 
-      <p style="color:#666;">Fixture amendments for Premier League matches in September.</p>
-      <a href="/sports/article/football" style="display:inline-flex; align-items:center; gap:6px; background:#007bff; color:#fff; padding:7px 18px; border-radius:5px; font-weight:500; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.04); transition:background 0.2s;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'" aria-label="Read full Football article">Read more <span style="font-size:1.2em;">&#8594;</span></a>
-    </div>
-  </div>
-  <div style="background:#fff; border:1px solid #ddd; border-radius:8px; margin-bottom:16px; padding:16px; display:flex; align-items:center; gap:20px;">
-    <img src="https://pbs.twimg.com/media/GwfIdbtXoAAOoi1?format=jpg&name=900x900" alt="Basketball" style="max-width:180px; max-height:180px; border-radius:12px; object-fit:cover;"/>
-    <div>
-      <h2 style="margin:0 0 8px 0; color:#007bff;">Basketball</h2>
-      <p style="color:#666;">The LA Lakers and Chicago Bulls are set to face off in a highly anticipated NBA showdown this weekend.</p>
-      <a href="/sports/article/basketball" style="display:inline-flex; align-items:center; gap:6px; background:#007bff; color:#fff; padding:7px 18px; border-radius:5px; font-weight:500; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.04); transition:background 0.2s;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'" aria-label="Read full Basketball article">Read more <span style="font-size:1.2em;">&#8594;</span></a>
-    </div>
-  </div>
-  <div style="background:#fff; border:1px solid #ddd; border-radius:8px; margin-bottom:16px; padding:16px; display:flex; align-items:center; gap:20px;">
-    <img src="https://static0.thesportsterimages.com/wordpress/wp-content/uploads/wm/2025/01/26-of-the-most-outrageous-lies-tall-tales-hulk-hogan-has-said.jpg" alt="Tennis" style="max-width:180px; max-height:180px; border-radius:12px; object-fit:cover;"/>
-    <div>
-      <h2 style="margin:0 0 8px 0; color:#007bff;"> wrestling</h2>
-      <p style="color:#666;">Revealed: What killed wrestling legend Hulk Hogan.</p>
-      <a href="/sports/article/tennis" style="display:inline-flex; align-items:center; gap:6px; background:#007bff; color:#fff; padding:7px 18px; border-radius:5px; font-weight:500; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.04); transition:background 0.2s;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'" aria-label="Read full Tennis article">Read more <span style="font-size:1.2em;">&#8594;</span></a>
-    </div>
-  </div>
-  <div style="background:#fff; border:1px solid #ddd; border-radius:8px; margin-bottom:16px; padding:16px; display:flex; align-items:center; gap:20px;">
-    <img src="https://i0.wp.com/dailysport.co.ke/wp-content/uploads/2019/09/GSU-vs-KDF-volleyball-in-Laikipia.jpg?resize=1042%2C642&ssl=1 alt=" Volleyball style="max-width:180px; max-height:180px; border-radius:12px; object-fit:cover;"/>  
-    <div>
-      <h2 style="margin:0 0 8px 0; color:#007bff;">Volleyball</h2>
-      <p style="color:#666;">Kenya's national team advances to the finals after a stunning victory in the African Championship.</p>
-      <a href="/sports/article/volleyball" style="display:inline-flex; align-items:center; gap:6px; background:#007bff; color:#fff; padding:7px 18px; border-radius:5px; font-weight:500; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.04); transition:background 0.2s;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'" aria-label="Read full Volleyball article">Read more <span style="font-size:1.2em;">&#8594;</span></a>
-    </div>
-  </div>
-  <div style="background:#fff; border:1px solid #ddd; border-radius:8px; margin-bottom:16px; padding:16px; display:flex; align-items:center; gap:20px;">
-    <img src="https://eu-cdn.rugbypass.com/webp-images/wp/wp-content/uploads/2025/07/Rieko-Ioane-Scott-Robertson-All-Blacks-vs-France-2025-1024x576.jpg.webp?maxw=766&comp=95" alt="Rugby" style="max-width:180px; max-height:180px; border-radius:12px; object-fit:cover;"/>
-    <div>
-      <h2 style="margin:0 0 8px 0; color:#007bff;">Rugby</h2>
-      <p style="color:#666;">The Rugby World Cup qualifiers heat up as top teams battle for a spot in the tournament.</p>
-      <a href="/sports/article/rugby" style="display:inline-flex; align-items:center; gap:6px; background:#007bff; color:#fff; padding:7px 18px; border-radius:5px; font-weight:500; text-decoration:none; box-shadow:0 2px 8px rgba(0,0,0,0.04); transition:background 0.2s;" onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'" aria-label="Read full Rugby article">Read more <span style="font-size:1.2em;">&#8594;</span></a>
-    </div>
-  </div>
-
-  <div style="background:#fff; border:1px solid #ddd; border-radius:8px; margin-bottom:16px; padding:16px; display:flex; align-items:center; gap:20px;">
-</div>
-
 {% endblock %}

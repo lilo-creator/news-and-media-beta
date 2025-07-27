@@ -3,63 +3,213 @@
 
 {% block title %}Latest News{% endblock %}
 
-{% block content %}
-<div class="container mt-4">
-    <h1 class="mb-4">Latest News</h1>
+{% block extra_css %}
+<style>
+    /* Ensure main content area takes up minimum height to push footer down */
+    .main-content {
+        min-height: calc(100vh - 200px); /* Adjust based on header/footer height */
+    }
+    
+    /* News card styling improvements */
+    .news-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+    
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .category-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .featured-badge {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .news-search {
+        border-radius: 25px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .news-search:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .category-filter .btn {
+        border-radius: 20px;
+        margin: 0 0.25rem;
+        font-weight: 500;
+    }
+    
+    .no-articles {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 3rem;
+    }
+</style>
+{% endblock %}
 
-    {% if news_list %}
-        <div class="row">
-            {% for article in news_list %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        {% if article.featured_image %}
-                            <img src="{{ article.featured_image.url }}" class="card-img-top" alt="{{ article.title }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ article.title }}</h5>
-                            {% if article.excerpt %}
-                                <p class="card-text">{{ article.excerpt|truncatewords:30 }}</p>
-                            {% endif %}
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    Published {{ article.publish_date|date:"F j, Y" }}
-                                    {% if article.category %}
-                                        in {{ article.category.name }}
-                                    {% endif %}
-                                </small>
-                            </p>
-                            <a href="{% url 'news:detail' article.slug %}" class="btn btn-primary">Read More</a>
-                        </div>
-                    </div>
+{% block content %}
+<div class="container">
+    <div class="main-content">
+        <!-- Hero Section -->
+        <div class="row mb-5">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Latest News</h1>
+                <p class="lead text-muted">Stay informed with the latest breaking news, in-depth analysis, and exclusive reports from around the world.</p>
+            </div>
+            <div class="col-lg-4">
+                <!-- Search Box -->
+                <div class="mt-3">
+                    <form method="GET" class="d-flex">
+                        <input type="search" name="search" class="form-control news-search me-2" 
+                               placeholder="Search news..." value="{{ request.GET.search }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
                 </div>
-            {% endfor %}
+            </div>
         </div>
 
-        {% if is_paginated %}
-            <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                        </li>
-                    {% endif %}
+        <!-- Category Filter -->
+        <div class="mb-4">
+            <div class="category-filter text-center">
+                <a href="{% url 'news:list' %}" 
+                   class="btn btn-outline-primary {% if not request.GET.category %}active{% endif %}">
+                    All News
+                </a>
+                {% for category in categories %}
+                    <a href="{% url 'news:list' %}?category={{ category.slug }}" 
+                       class="btn btn-outline-primary {% if request.GET.category == category.slug %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
 
-                    {% for num in page_obj.paginator.page_range %}
-                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                        </li>
-                    {% endfor %}
+        {% if news_list %}
+            <div class="row">
+                {% for article in news_list %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100 news-card">
+                            <img src="{{ article.get_featured_image_url }}" class="card-img-top" alt="{{ article.title }}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body d-flex flex-column">
+                                <div class="mb-2">
+                                    {% if article.featured %}
+                                        <span class="badge featured-badge me-2">
+                                            <i class="bi bi-star-fill me-1"></i>Featured
+                                        </span>
+                                    {% endif %}
+                                    <span class="badge category-badge bg-secondary">{{ article.category.name }}</span>
+                                </div>
+                                <h5 class="card-title fw-bold">{{ article.title }}</h5>
+                                {% if article.excerpt %}
+                                    <p class="card-text flex-grow-1 text-muted">{{ article.excerpt|truncatewords:25 }}</p>
+                                {% endif %}
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar3 me-1"></i>{{ article.publish_date|date:"M j, Y" }}
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="bi bi-eye me-1"></i>{{ article.view_count }} views
+                                        </small>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="bi bi-person me-1"></i>{{ article.author.get_full_name|default:article.author.username }}
+                                        </small>
+                                        <a href="{% url 'news:detail' article.slug %}" class="btn btn-primary btn-sm">
+                                            Read More <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
 
-                    {% if page_obj.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
+            <!-- Pagination -->
+            {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                    <i class="bi bi-chevron-left"></i> Previous
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                    Next <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        {% else %}
+            <!-- No Articles Found -->
+            <div class="text-center py-5 no-articles">
+                <i class="bi bi-newspaper display-1 mb-4"></i>
+                <h3 class="mb-3">No Articles Found</h3>
+                {% if request.GET.search %}
+                    <p class="mb-4">No articles found for "{{ request.GET.search }}". Try different keywords or browse all articles.</p>
+                    <a href="{% url 'news:list' %}" class="btn btn-light btn-lg">Browse All Articles</a>
+                {% elif request.GET.category %}
+                    <p class="mb-4">No articles found in this category. Check back later for updates.</p>
+                    <a href="{% url 'news:list' %}" class="btn btn-light btn-lg">Browse All Categories</a>
+                {% else %}
+                    <p class="mb-4">Check back later for the latest news updates.</p>
+                    <!-- Add some sample data if no articles exist -->
+                    <div class="mt-4">
+                        <h5 class="mb-3 text-white">Featured Categories:</h5>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <span class="badge bg-light text-dark fs-6 p-2">Breaking News</span>
+                            <span class="badge bg-light text-dark fs-6 p-2">Technology</span>
+                            <span class="badge bg-light text-dark fs-6 p-2">Politics</span>
+                            <span class="badge bg-light text-dark fs-6 p-2">Entertainment</span>
+                            <span class="badge bg-light text-dark fs-6 p-2">Health</span>
+                            <span class="badge bg-light text-dark fs-6 p-2">Business</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
         {% endif %}
-    {% else %}
-        <div class="alert alert-info">No articles available.</div>
-    {% endif %}
+    </div>
 </div>
 {% endblock %}

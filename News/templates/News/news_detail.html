@@ -17,11 +17,9 @@
             </div>
         </header>
 
-        {% if article.featured_image %}
-            <div class="article-image mb-4">
-                <img src="{{ article.featured_image.url }}" class="img-fluid rounded" alt="{{ article.title }}">
-            </div>
-        {% endif %}
+        <div class="article-image mb-4">
+            <img src="{{ article.get_featured_image_url }}" class="img-fluid rounded" alt="{{ article.title }}">
+        </div>
 
         {% if article.excerpt %}
             <div class="lead mb-4">
@@ -69,9 +67,7 @@
                 {% for related in related_articles %}
                     <div class="col-md-4 mb-4">
                         <div class="card h-100">
-                            {% if related.featured_image %}
-                                <img src="{{ related.featured_image.url }}" class="card-img-top" alt="{{ related.title }}">
-                            {% endif %}
+                            <img src="{{ related.get_featured_image_url }}" class="card-img-top" alt="{{ related.title }}">
                             <div class="card-body">
                                 <h5 class="card-title">{{ related.title }}</h5>
                                 {% if related.excerpt %}

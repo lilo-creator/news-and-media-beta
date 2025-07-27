@@ -1,0 +1,568 @@
+{% extends "base.html" %}
+
+{% block title %}Events - News & Media{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    * {
+        font-family: 'Inter', sans-serif;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+    
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .event-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+        transform-style: preserve-3d;
+    }
+    
+    .event-card:hover {
+        transform: translateY(-20px) rotateX(5deg) rotateY(5deg);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero-floating {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .neon-glow {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.5),
+                    0 0 40px rgba(102, 126, 234, 0.3),
+                    0 0 60px rgba(102, 126, 234, 0.1);
+    }
+    
+    .morphism-card {
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(8.5px);
+        -webkit-backdrop-filter: blur(8.5px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    .tab-button {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .tab-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+    
+    .tab-button:hover::before {
+        left: 100%;
+    }
+    
+    .image-overlay {
+        background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .event-card:hover .image-overlay {
+        opacity: 1;
+    }
+    
+    .pulse-effect {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: .5;
+        }
+    }
+    
+    .featured-badge {
+        background: linear-gradient(45deg, #FFD700, #FFA500);
+        animation: sparkle 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes sparkle {
+        0% {
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+        100% {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 165, 0, 0.6);
+        }
+    }
+    
+    .scroll-reveal {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 0.6s ease;
+    }
+    
+    .scroll-reveal.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .stats-counter {
+        font-size: 3rem;
+        font-weight: 800;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen relative overflow-hidden">
+    <!-- Floating Background Elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-white opacity-5 rounded-full blur-3xl hero-floating"></div>
+        <div class="absolute top-40 right-20 w-96 h-96 bg-purple-300 opacity-10 rounded-full blur-3xl hero-floating" style="animation-delay: -2s;"></div>
+        <div class="absolute bottom-20 left-1/4 w-80 h-80 bg-pink-300 opacity-8 rounded-full blur-3xl hero-floating" style="animation-delay: -4s;"></div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="relative z-10 pt-20 pb-16">
+        <div class="container mx-auto px-6 text-center">
+            <div class="mb-8">
+                <div class="inline-block p-4 rounded-full glass-effect mb-6 hero-floating">
+                    <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl font-black mb-6 text-white leading-tight">
+                Unforgettable
+                <span class="block gradient-text">Experiences</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-white/80 mb-12 max-w-4xl mx-auto leading-relaxed">
+                Discover extraordinary events that inspire, connect, and transform. 
+                From intimate gatherings to grand celebrations, find your next amazing experience.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                {% if user.is_authenticated %}
+                <a href="{% url 'events:create_event' %}" 
+                   class="group px-8 py-4 bg-white text-gray-800 font-bold rounded-full text-lg hover:bg-gray-100 transition-all duration-300 shadow-2xl hover:shadow-white/20 neon-glow">
+                    <span class="flex items-center">
+                        <svg class="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        Create Event
+                    </span>
+                </a>
+                {% endif %}
+                <a href="#events-grid" 
+                   class="px-8 py-4 glass-effect text-white font-bold rounded-full text-lg hover:bg-white/20 transition-all duration-300">
+                    <span class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                        Explore Events
+                    </span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="relative z-10 py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center morphism-card p-8 scroll-reveal">
+                    <div class="stats-counter text-white mb-2">{{ upcoming_events|length }}</div>
+                    <div class="text-white/70 font-medium">Upcoming Events</div>
+                </div>
+                <div class="text-center morphism-card p-8 scroll-reveal" style="animation-delay: 0.1s;">
+                    <div class="stats-counter text-white mb-2">{{ past_events|length }}</div>
+                    <div class="text-white/70 font-medium">Past Events</div>
+                </div>
+                <div class="text-center morphism-card p-8 scroll-reveal" style="animation-delay: 0.2s;">
+                    <div class="stats-counter text-white mb-2">{{ featured_events|length }}</div>
+                    <div class="text-white/70 font-medium">Featured</div>
+                </div>
+                <div class="text-center morphism-card p-8 scroll-reveal" style="animation-delay: 0.3s;">
+                    <div class="stats-counter text-white mb-2">{{ total_events }}</div>
+                    <div class="text-white/70 font-medium">Total Events</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="relative z-10 py-8">
+        <div class="container mx-auto px-6">
+            <div class="morphism-card p-6 scroll-reveal">
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="showSection('upcoming')" id="upcoming-btn" 
+                            class="tab-button px-8 py-4 rounded-full font-bold text-white bg-white/20 hover:bg-white/30 transition-all duration-300 border border-white/30">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                            </svg>
+                            Upcoming Events
+                        </span>
+                    </button>
+                    <button onclick="showSection('past')" id="past-btn"
+                            class="tab-button px-8 py-4 rounded-full font-bold text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                            </svg>
+                            Past Events
+                        </span>
+                    </button>
+                    <button onclick="showSection('featured')" id="featured-btn"
+                            class="tab-button px-8 py-4 rounded-full font-bold text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                            </svg>
+                            Featured
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div id="events-grid" class="relative z-10 py-16">
+        <div class="container mx-auto px-6">
+            
+            <!-- Upcoming Events -->
+            <div id="upcoming-events" class="event-section">
+                <div class="text-center mb-16 scroll-reveal">
+                    <div class="inline-block px-6 py-3 morphism-card text-white font-bold mb-6 pulse-effect">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                            Coming Soon
+                        </span>
+                    </div>
+                    <h2 class="text-5xl md:text-6xl font-black text-white mb-6">Upcoming Events</h2>
+                    <p class="text-xl text-white/80 max-w-3xl mx-auto">Don't miss these incredible upcoming experiences</p>
+                </div>
+                
+                {% if upcoming_events %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {% for event in upcoming_events %}
+                            <div class="event-card rounded-3xl overflow-hidden scroll-reveal" style="animation-delay: {{ forloop.counter0|mul:0.1 }}s;">
+                                <!-- Event Image -->
+                                <div class="relative h-64 overflow-hidden">
+                                    <img src="{{ event.get_banner_image_url }}" alt="{{ event.title }}" 
+                                         class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                                    <div class="image-overlay absolute inset-0 flex items-center justify-center">
+                                        <svg class="w-16 h-16 text-white opacity-80" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    
+                                    <!-- Date Badge -->
+                                    <div class="absolute top-4 right-4 glass-effect px-4 py-2 rounded-xl text-white font-bold text-sm">
+                                        {{ event.date|date:"M d" }}
+                                    </div>
+                                    
+                                    <!-- Featured Badge -->
+                                    {% if event.is_featured %}
+                                        <div class="absolute top-4 left-4 featured-badge px-3 py-1 rounded-full text-white font-bold text-xs">
+                                            <span class="flex items-center">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                </svg>
+                                                FEATURED
+                                            </span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Event Content -->
+                                <div class="p-8">
+                                    <div class="flex items-center gap-2 mb-4">
+                                        {% for tag in event.tags.all|slice:":2" %}
+                                            <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                                                {{ tag.name }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-4 leading-tight">{{ event.title }}</h3>
+                                    
+                                    <!-- Event Meta -->
+                                    <div class="space-y-3 mb-6 text-gray-600">
+                                        <div class="flex items-center">
+                                            <svg class="w-5 h-5 mr-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-medium">{{ event.date|date:"F j, Y" }}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <svg class="w-5 h-5 mr-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-medium">{{ event.time_display }}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <svg class="w-5 h-5 mr-3 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-medium truncate">{{ event.venue_name }}</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <svg class="w-5 h-5 mr-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="font-bold text-green-600">{{ event.ticket_price }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-600 mb-8 leading-relaxed">{{ event.description|truncatewords:20 }}</p>
+                                    
+                                    <!-- Action Button -->
+                                    <a href="{{ event.get_absolute_url }}" 
+                                       class="group block w-full text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 px-6 rounded-2xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                                        <span class="flex items-center justify-center">
+                                            Learn More
+                                            <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                            </svg>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-20 scroll-reveal">
+                        <div class="morphism-card p-16 max-w-2xl mx-auto">
+                            <svg class="w-24 h-24 text-white/50 mx-auto mb-8" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <h3 class="text-3xl font-bold text-white mb-4">No Upcoming Events</h3>
+                            <p class="text-white/70 text-xl">New exciting events coming soon!</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Past Events Section -->
+            <div id="past-events" class="event-section hidden">
+                <div class="text-center mb-16 scroll-reveal">
+                    <h2 class="text-5xl md:text-6xl font-black text-white mb-6">Past Events</h2>
+                    <p class="text-xl text-white/80 max-w-3xl mx-auto">Relive the memories from our amazing past events</p>
+                </div>
+                
+                {% if past_events %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {% for event in past_events %}
+                            <div class="event-card rounded-3xl overflow-hidden opacity-80 hover:opacity-100 scroll-reveal" style="animation-delay: {{ forloop.counter0|mul:0.1 }}s;">
+                                <div class="relative h-64 overflow-hidden">
+                                    <img src="{{ event.get_banner_image_url }}" alt="{{ event.title }}" 
+                                         class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-500">
+                                    
+                                    <div class="absolute top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-xl font-bold text-sm">
+                                        {{ event.date|date:"M d" }}
+                                    </div>
+                                    
+                                    <div class="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full font-bold text-xs">
+                                        <span class="flex items-center">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            COMPLETED
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-8">
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-4">{{ event.title }}</h3>
+                                    <p class="text-gray-600 mb-6">{{ event.description|truncatewords:15 }}</p>
+                                    <a href="{{ event.get_absolute_url }}" 
+                                       class="block w-full text-center bg-gray-600 text-white font-bold py-3 px-6 rounded-2xl hover:bg-gray-700 transition-all duration-300">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Featured Events Section -->
+            <div id="featured-events" class="event-section hidden">
+                <div class="text-center mb-16 scroll-reveal">
+                    <h2 class="text-5xl md:text-6xl font-black text-white mb-6">Featured Events</h2>
+                    <p class="text-xl text-white/80 max-w-3xl mx-auto">Our most popular and highly recommended events</p>
+                </div>
+                
+                {% if featured_events %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        {% for event in featured_events %}
+                            <div class="event-card rounded-3xl overflow-hidden neon-glow scroll-reveal" style="animation-delay: {{ forloop.counter0|mul:0.2 }}s;">
+                                <div class="md:flex h-full">
+                                    <div class="md:w-1/2 relative h-80 md:h-auto">
+                                        <img src="{{ event.get_banner_image_url }}" alt="{{ event.title }}" 
+                                             class="w-full h-full object-cover">
+                                        
+                                        <div class="absolute top-6 left-6 featured-badge px-4 py-2 rounded-xl text-white font-bold text-sm">
+                                            <span class="flex items-center">
+                                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                </svg>
+                                                FEATURED
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="md:w-1/2 p-10 flex flex-col justify-center">
+                                        <h3 class="text-3xl font-bold text-gray-800 mb-6">{{ event.title }}</h3>
+                                        
+                                        <div class="space-y-4 mb-8 text-gray-600">
+                                            <div class="flex items-center">
+                                                <svg class="w-5 h-5 mr-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span class="font-medium">{{ event.date|date:"F j, Y" }}</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <svg class="w-5 h-5 mr-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span class="font-medium">{{ event.venue_name }}</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <svg class="w-5 h-5 mr-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"></path>
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span class="font-bold text-green-600 text-lg">{{ event.ticket_price }}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="text-gray-600 mb-8 leading-relaxed">{{ event.description|truncatewords:25 }}</p>
+                                        
+                                        <a href="{{ event.get_absolute_url }}" 
+                                           class="inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 px-8 rounded-2xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-xl">
+                                            <span class="flex items-center">
+                                                Learn More
+                                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                                </svg>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Section switching functionality
+function showSection(section) {
+    // Hide all sections
+    document.querySelectorAll('.event-section').forEach(el => {
+        el.classList.add('hidden');
+    });
+    
+    // Reset all buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.className = 'tab-button px-8 py-4 rounded-full font-bold text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300';
+    });
+    
+    // Show selected section and highlight button
+    if (section === 'upcoming') {
+        document.getElementById('upcoming-events').classList.remove('hidden');
+        document.getElementById('upcoming-btn').className = 'tab-button px-8 py-4 rounded-full font-bold text-white bg-white/20 hover:bg-white/30 transition-all duration-300 border border-white/30';
+    } else if (section === 'past') {
+        document.getElementById('past-events').classList.remove('hidden');
+        document.getElementById('past-btn').className = 'tab-button px-8 py-4 rounded-full font-bold text-white bg-white/20 hover:bg-white/30 transition-all duration-300 border border-white/30';
+    } else if (section === 'featured') {
+        document.getElementById('featured-events').classList.remove('hidden');
+        document.getElementById('featured-btn').className = 'tab-button px-8 py-4 rounded-full font-bold text-white bg-white/20 hover:bg-white/30 transition-all duration-300 border border-white/30';
+    }
+    
+    // Trigger scroll reveal animation for newly shown content
+    setTimeout(() => {
+        revealOnScroll();
+    }, 100);
+}
+
+// Scroll reveal functionality
+function revealOnScroll() {
+    const reveals = document.querySelectorAll('.scroll-reveal');
+    
+    reveals.forEach(reveal => {
+        const windowHeight = window.innerHeight;
+        const elementTop = reveal.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < windowHeight - elementVisible) {
+            reveal.classList.add('revealed');
+        }
+    });
+}
+
+// Initialize scroll reveal on load and scroll
+window.addEventListener('scroll', revealOnScroll);
+window.addEventListener('load', revealOnScroll);
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Initialize with upcoming events shown
+document.addEventListener('DOMContentLoaded', function() {
+    showSection('upcoming');
+    setTimeout(revealOnScroll, 100);
+});
+</script>
+{% endblock %}

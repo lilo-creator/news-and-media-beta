@@ -74,6 +74,18 @@ class Event(models.Model):
     def get_absolute_url(self):
         return reverse('events:event_detail', args=[self.slug])
     
+    def get_banner_image_url(self):
+        """Return the banner image URL if it exists, otherwise return a placeholder."""
+        if self.banner_image and hasattr(self.banner_image, 'url'):
+            try:
+                return self.banner_image.url
+            except ValueError:
+                # Image file doesn't exist
+                return 'https://via.placeholder.com/1200x600/667eea/ffffff?text=Event'
+        elif self.banner_image_url:
+            return self.banner_image_url
+        return 'https://via.placeholder.com/1200x600/667eea/ffffff?text=Event'
+    
     @property
     def is_upcoming(self):
         return self.date >= timezone.now().date()

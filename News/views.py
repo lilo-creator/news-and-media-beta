@@ -11,7 +11,7 @@ class NewsListView(ListView):
     ordering = ['-publish_date']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().filter(status='published')
         category = self.request.GET.get('category')
         search = self.request.GET.get('search')
         
@@ -25,12 +25,13 @@ class NewsListView(ListView):
                 Q(excerpt__icontains=search)
             )
         
-        # Temporarily show all articles for debugging
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
+        context['current_category'] = self.request.GET.get('category')
+        context['current_search'] = self.request.GET.get('search')
         return context
 
 class NewsDetailView(DetailView):

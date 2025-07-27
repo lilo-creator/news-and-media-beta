@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+
+{% block title %}Events - News & Media{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Base styles */
+    body {
+        background-color: #f8fafc;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Hero section */
+    .events-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        margin-bottom: 3rem;
+        margin-top: 0;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .events-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+        animation: float 20s infinite linear;
+    }
+    
+    @keyframes float {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    /* Card styling */
+    .event-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .event-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Tab button styling */
+    .tab-button {
+        transition: all 0.3s ease;
+        border-radius: 30px;
+        padding: 10px 20px;
+        margin: 0 5px;
+        font-weight: 600;
+    }
+    
+    .tab-button.active {
+        background-color: #007bff;
+        color: white;
+        box-shadow: 0 3px 10px rgba(0, 123, 255, 0.3);
+    }
+    
+    /* Stats card */
+    .stats-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+        padding: 1.5rem;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    /* Badge styling */
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-weight: 600;
+    }
+    
+    .featured-badge {
+        background-color: #fbbf24;
+        color: #92400e;
+    }
+    
+    .completed-badge {
+        background-color: #10b981;
+        color: white;
+    }
+    
+    /* Helper classes */
+    .hidden {
+        display: none !important;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .events-hero {
+            padding: 2rem 1rem;
+        }
+        
+        .tab-button {
+            margin-bottom: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="events-hero text-center">
+        <h1 class="display-4 fw-bold mb-3">Events & Experiences</h1>
+        <p class="lead">Discover and join amazing events in your community. From workshops to celebrations, find what interests you.</p>
+        
+        <div class="mt-4">
+            {% if user.is_authenticated %}
+            <a href="{% url 'events:create_event' %}" 
+               class="btn btn-light me-3">
+                <i class="bi bi-plus-circle"></i> Create Event
+            </a>
+            {% endif %}
+            <a href="#events-section" 
+               class="btn btn-outline-light">
+                <i class="bi bi-calendar-event"></i> Browse Events
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-4">
+            <div class="stats-card text-center">
+                <div class="text-primary display-6 fw-bold mb-1">{{ upcoming_events|length }}</div>
+                <div class="text-muted">Upcoming</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="stats-card text-center">
+                <div class="text-primary display-6 fw-bold mb-1">{{ past_events|length }}</div>
+                <div class="text-muted">Past Events</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="stats-card text-center">
+                <div class="text-primary display-6 fw-bold mb-1">{{ featured_events|length }}</div>
+                <div class="text-muted">Featured</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="stats-card text-center">
+                <div class="text-primary display-6 fw-bold mb-1">{{ total_events }}</div>
+                <div class="text-muted">Total</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <div class="btn-group filter-buttons">
+                <button onclick="showSection('upcoming')" id="upcoming-btn" 
+                        class="btn btn-outline-primary tab-button active">
+                    <i class="bi bi-calendar-check me-2"></i>Upcoming Events
+                </button>
+                <button onclick="showSection('past')" id="past-btn"
+                        class="btn btn-outline-primary tab-button">
+                    <i class="bi bi-clock-history me-2"></i>Past Events
+                </button>
+                <button onclick="showSection('featured')" id="featured-btn"
+                        class="btn btn-outline-primary tab-button">
+                    <i class="bi bi-star me-2"></i>Featured
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Sections -->
+    <div id="events-section">
+        <!-- Upcoming Events -->
+        <div id="upcoming-events" class="event-section">
+            <h2 class="mb-4">Upcoming Events</h2>
+            <div class="row">
+                {% for event in upcoming_events %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 event-card">
+                        {% if event.banner_image %}
+                            <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                        {% elif event.banner_image_url %}
+                            <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-primary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <div class="text-center">
+                                    <i class="bi bi-calendar-event fs-1"></i>
+                                    <p class="mt-2 mb-0">{{ event.title|truncatechars:20 }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                {% if event.is_featured %}
+                                    <span class="badge bg-warning me-2">
+                                        <i class="bi bi-star-fill me-1"></i>Featured
+                                    </span>
+                                {% endif %}
+                                <span class="badge bg-primary">{{ event.date|date:"M d" }}</span>
+                            </div>
+                            <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                            <p class="card-text flex-grow-1 text-muted">{{ event.description|truncatewords:20 }}</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ event.venue_name }}
+                                    </small>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="bi bi-clock me-1"></i>{{ event.time_display }}
+                                    </small>
+                                    <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary btn-sm">
+                                        View Details <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+                    <h3>No Upcoming Events</h3>
+                    <p class="text-muted">Check back later for new events</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Past Events -->
+        <div id="past-events" class="event-section hidden">
+            <h2 class="mb-4">Past Events</h2>
+            <div class="row">
+                {% for event in past_events %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 event-card">
+                        {% if event.banner_image %}
+                            <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.title }}" 
+                                 style="height: 200px; object-fit: cover; filter: grayscale(50%);">
+                        {% elif event.banner_image_url %}
+                            <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}" 
+                                 style="height: 200px; object-fit: cover; filter: grayscale(50%);">
+                        {% else %}
+                            <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <div class="text-center">
+                                    <i class="bi bi-calendar-check fs-1"></i>
+                                    <p class="mt-2 mb-0">{{ event.title|truncatechars:20 }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1"></i>Completed
+                                </span>
+                                <span class="badge bg-secondary ms-2">{{ event.date|date:"M d" }}</span>
+                            </div>
+                            <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                            <p class="card-text flex-grow-1 text-muted">{{ event.description|truncatewords:20 }}</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt me-1"></i>{{ event.venue_name }}
+                                    </small>
+                                    <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-secondary btn-sm">
+                                        View Details <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+                    <h3>No Past Events</h3>
+                    <p class="text-muted">There are no past events to display</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Featured Events -->
+        <div id="featured-events" class="event-section hidden">
+            <h2 class="mb-4">Featured Events</h2>
+            <div class="row">
+                {% for event in featured_events %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 event-card">
+                        <div class="row g-0 h-100">
+                            <div class="col-md-5">
+                                {% if event.banner_image %}
+                                    <img src="{{ event.banner_image.url }}" class="img-fluid rounded-start h-100" alt="{{ event.title }}" 
+                                         style="object-fit: cover; width: 100%; height: 100%;">
+                                {% elif event.banner_image_url %}
+                                    <img src="{{ event.banner_image_url }}" class="img-fluid rounded-start h-100" alt="{{ event.title }}" 
+                                         style="object-fit: cover; width: 100%; height: 100%;">
+                                {% else %}
+                                    <div class="bg-primary text-white d-flex align-items-center justify-content-center h-100">
+                                        <div class="text-center">
+                                            <i class="bi bi-calendar-star fs-1"></i>
+                                            <p class="mt-2 mb-0">{{ event.title|truncatechars:15 }}</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body d-flex flex-column h-100">
+                                    <div class="mb-2">
+                                        <span class="badge bg-warning me-2">
+                                            <i class="bi bi-star-fill me-1"></i>Featured
+                                        </span>
+                                        <span class="badge bg-primary">{{ event.date|date:"M d" }}</span>
+                                    </div>
+                                    <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                                    <p class="card-text flex-grow-1 text-muted">{{ event.description|truncatewords:25 }}</p>
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <small class="text-muted">
+                                                <i class="bi bi-geo-alt me-1"></i>{{ event.venue_name }}
+                                            </small>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <i class="bi bi-clock me-1"></i>{{ event.time_display }}
+                                            </small>
+                                            <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary btn-sm">
+                                                View Details <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-star display-1 text-muted mb-3"></i>
+                    <h3>No Featured Events</h3>
+                    <p class="text-muted">Check back later for featured events</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Section switching functionality
+function showSection(section) {
+    // Hide all sections
+    document.querySelectorAll('.event-section').forEach(el => {
+        el.classList.add('hidden');
+    });
+    
+    // Reset all buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected section and highlight button
+    if (section === 'upcoming') {
+        document.getElementById('upcoming-events').classList.remove('hidden');
+        document.getElementById('upcoming-btn').classList.add('active');
+    } else if (section === 'past') {
+        document.getElementById('past-events').classList.remove('hidden');
+        document.getElementById('past-btn').classList.add('active');
+    } else if (section === 'featured') {
+        document.getElementById('featured-events').classList.remove('hidden');
+        document.getElementById('featured-btn').classList.add('active');
+    }
+}
+
+// Initialize with upcoming events shown
+document.addEventListener('DOMContentLoaded', function() {
+    showSection('upcoming');
+});
+</script>
+{% endblock %}

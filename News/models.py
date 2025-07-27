@@ -76,6 +76,16 @@ class Article(models.Model):
             self.slug
         ])
     
+    def get_featured_image_url(self):
+        """Return the featured image URL if it exists, otherwise return a placeholder."""
+        if self.featured_image and hasattr(self.featured_image, 'url'):
+            try:
+                return self.featured_image.url
+            except ValueError:
+                # Image file doesn't exist
+                return 'https://via.placeholder.com/800x400/1e3c72/ffffff?text=News+Article'
+        return 'https://via.placeholder.com/800x400/1e3c72/ffffff?text=News+Article'
+    
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)

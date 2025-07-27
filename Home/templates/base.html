@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,11 +14,28 @@
     {% block extra_css %}{% endblock %}
     
     <style>
+        /* Ensure proper layout for sticky footer */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 80px; /* Add padding to account for fixed navbar */
+        }
+        
+        main {
+            flex: 1 0 auto;
+        }
+        
         /* Modern Navigation Styles */
         .navbar-modern {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
             padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
         }
         
         .navbar-brand-modern {
@@ -54,7 +71,7 @@
             background: #2c3e50;
             color: white;
             padding: 3rem 0 2rem;
-            margin-top: 5rem;
+            flex-shrink: 0;
         }
         
         .footer-modern a {
@@ -83,9 +100,24 @@
             background: #3498db;
             transform: translateY(-2px);
         }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px; /* Reduced padding for mobile */
+            }
+            
+            .navbar-modern {
+                padding: 0.5rem 0; /* Reduced navbar padding on mobile */
+            }
+            
+            .navbar-brand-modern {
+                font-size: 1.4rem; /* Smaller brand text on mobile */
+            }
+        }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column h-100">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-modern">
         <div class="container">
@@ -162,12 +194,12 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="container">
+    <main class="flex-shrink-0">
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
     <!-- Footer -->
-    <footer class="footer-modern">
+    <footer class="footer-modern flex-shrink-0">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">

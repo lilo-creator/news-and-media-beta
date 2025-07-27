@@ -211,7 +211,7 @@
             <div class="hero-grid">
                 <div class="hero-main">
                     {% if main_story %}
-                        <article class="hero-featured" style="background-image: url('{{ main_story.featured_image.url }}')">
+                        <article class="hero-featured" style="background-image: url('{{ main_story.get_featured_image_url }}');">
                             <div class="hero-content">
                                 <span class="category">{{ main_story.category }}</span>
                                 <h1>{{ main_story.title }}</h1>
@@ -259,9 +259,7 @@
                 {% if featured_stories %}
                     {% for story in featured_stories %}
                         <article class="news-card">
-                            {% if story.featured_image %}
-                                <img src="{{ story.featured_image.url }}" alt="{{ story.title }}" class="news-image">
-                            {% endif %}
+                            <img src="{{ story.get_featured_image_url }}" alt="{{ story.title }}" class="news-image">
                             <div class="news-content">
                                 <span class="news-category">{{ story.category }}</span>
                                 <h3 class="news-title">{{ story.title }}</h3>

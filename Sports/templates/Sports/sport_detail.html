@@ -2,7 +2,13 @@
 {% block content %}
 <div style="background:#e9ecef; padding:24px; border-radius:10px; margin-bottom:20px;margin-top:100px;">
   {% if sport.image %}
-    <img src="{{ sport.image.url }}" alt="{{ sport.name }} image" style="max-width:100%; max-height:320px; border-radius:14px; display:block; margin-bottom:18px; object-fit:cover;"/>
+    {% if sport.image.url %}
+      <img src="{{ sport.image.url }}" alt="{{ sport.name }} image" style="max-width:100%; max-height:320px; border-radius:14px; display:block; margin-bottom:18px; object-fit:cover;"/>
+    {% else %}
+      <img src="{{ sport.image }}" alt="{{ sport.name }} image" style="max-width:100%; max-height:320px; border-radius:14px; display:block; margin-bottom:18px; object-fit:cover;"/>
+    {% endif %}
+  {% else %}
+    <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=2070&auto=format&fit=crop" alt="{{ sport.name }} image" style="max-width:100%; max-height:320px; border-radius:14px; display:block; margin-bottom:18px; object-fit:cover;"/>
   {% endif %}
   <h1>{{ sport.name }}</h1>
   <p>{{ sport.description }}</p>

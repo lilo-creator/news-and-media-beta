@@ -1,20 +1,93 @@
 
-from django.shortcuts import render, get_object_or_404
-from .models import Sport, Team, Player, Match
-from itertools import chain
+from django.shortcuts import render
+from django.views.generic import TemplateView
 from django.http import Http404
 
+def get_dummy_sports():
+    """Return a list of dummy sports categories that can be used by views."""
+    return [
+        {
+            'name': 'Football',
+            'pk': 1,
+            'image': {'url': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop'},
+            'description': 'The world\'s most popular sport played with a spherical ball between two teams of eleven players.'
+        },
+        {
+            'name': 'Basketball',
+            'pk': 2,
+            'image': {'url': 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2090&auto=format&fit=crop'},
+            'description': 'A team sport in which two teams of five players compete to score points by throwing a ball through a hoop.'
+        },
+        {
+            'name': 'Tennis',
+            'pk': 3,
+            'image': {'url': 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?q=80&w=2018&auto=format&fit=crop'},
+            'description': 'A racket sport played individually or between two teams of two players each.'
+        },
+        {
+            'name': 'Cricket',
+            'pk': 4,
+            'image': {'url': 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=2005&auto=format&fit=crop'},
+            'description': 'A bat-and-ball game played between two teams of eleven players on a field with a wicket at each end.'
+        },
+        {
+            'name': 'Rugby',
+            'pk': 5,
+            'image': {'url': 'https://images.unsplash.com/photo-1544943910-4c1dc44aab44?q=80&w=2062&auto=format&fit=crop'},
+            'description': 'A team sport played with an oval ball that may be kicked, carried, and passed from hand to hand.'
+        },
+        {
+            'name': 'Golf',
+            'pk': 6,
+            'image': {'url': 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?q=80&w=2070&auto=format&fit=crop'},
+            'description': 'A precision club-and-ball sport in which players use various clubs to hit balls into holes on a course.'
+        },
+        {
+            'name': 'Swimming',
+            'pk': 7,
+            'image': {'url': 'https://images.unsplash.com/photo-1530549387789-4c1017266635?q=80&w=2070&auto=format&fit=crop'},
+            'description': 'A sport that involves propelling the body through water using the arms and legs.'
+        },
+        {
+            'name': 'Athletics',
+            'pk': 8,
+            'image': {'url': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop'},
+            'description': 'A collection of sporting events that involve competitive running, jumping, throwing, and walking.'
+        },
+        {
+            'name': 'Volleyball',
+            'pk': 9,
+            'image': {'url': 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=2007&auto=format&fit=crop'},
+            'description': 'A team sport in which two teams of six players are separated by a net.'
+        }
+    ]
+
 def team_detail(request, pk):
-    team = get_object_or_404(Team, pk=pk)
-    return render(request, 'Sports/team_detail.html', {'team': team})
+    return render(request, 'Sports/team_detail.html', {'team': {
+        'name': 'Team Name',
+        'sport': {'name': 'Sport Name'},
+        'description': 'Team description goes here'
+    }})
 
 def player_detail(request, pk):
-    player = get_object_or_404(Player, pk=pk)
-    return render(request, 'Sports/player_detail.html', {'player': player})
+    return render(request, 'Sports/player_detail.html', {'player': {
+        'first_name': 'John',
+        'last_name': 'Doe',
+        'team': {'name': 'Team Name'},
+        'position': 'Forward',
+        'jersey_number': 10,
+        'bio': 'Player bio goes here'
+    }})
 
 def match_detail(request, pk):
-    match = get_object_or_404(Match, pk=pk)
-    return render(request, 'Sports/match_detail.html', {'match': match})
+    return render(request, 'Sports/match_detail.html', {'match': {
+        'home_team': {'name': 'Home Team'},
+        'away_team': {'name': 'Away Team'},
+        'match_date': '2025-07-28',
+        'venue': 'Stadium Name',
+        'status': 'scheduled',
+        'summary': 'Match summary goes here'
+    }})
 
 def article_detail(request, sport):
     article = ARTICLE_DATA.get(sport)
@@ -27,23 +100,22 @@ def article_detail(request, sport):
         'article': article['article'],
     })
 
-# ...existing imports...
-
-# Sport detail with teams
 def sport_detail(request, pk):
-    sport = get_object_or_404(Sport, pk=pk)
+    sports = get_dummy_sports()
+    sport = next((s for s in sports if s['pk'] == int(pk)), None)
+    if not sport:
+        raise Http404("Sport not found")
     return render(request, 'Sports/sport_detail.html', {'sport': sport})
 
-# List all sports
 def sport_list(request):
-    sports = Sport.objects.all()
+    sports = get_dummy_sports()
     return render(request, 'Sports/sport_list.html', {'sports': sports})
 
 ARTICLE_DATA = {
     'football': {
         'sport': 'Football',
         'headline': 'Manchester City clinched a dramatic win over Arsenal in a thrilling Premier League encounter last night.',
-        'image_url': 'https://resources.premierleague.pulselive.com/photo-resources/2025/07/17/a3bb7df8-7c88-4b27-8cbe-2394dfdcbfc8/Haaland-Maguire.jpg?width=1440&height=810',
+        'image_url': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop',
         'article': '''<ul>
 <li>Premier League Standings: Brentford v Chelsea</li>
 <li>Next Big Match: Man City v Burnley</li>
@@ -62,7 +134,7 @@ All kick-off times are 15:00 BST unless otherwise mentioned.
     'basketball': {
         'sport': 'Basketball',
         'headline': 'NBA 2K26 All-Summer League teams announced.',
-        'image_url': 'https://cdn.nba.com/manage/2025/07/16x9First-Team-1-1568x882.png',
+        'image_url': 'https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2090&auto=format&fit=crop',
         'article': '''<ul>
 <li>NBA Standings:Kyle Filipowski</li>
 <li>Next Big Game: Oklahoma City Thunder vs. Indiana Pacers</li>

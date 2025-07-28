@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}Home - News & Media{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        padding: 2rem 0;
+        margin-bottom: 3rem;
+        color: white;
+    }
+
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        min-height: 60vh;
+    }
+
+    .hero-featured {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        border-radius: 1rem;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        align-items: flex-end;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .hero-featured::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 70%;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    }
+
+    .hero-content {
+        position: relative;
+        padding: 2rem;
+        color: white;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .hero-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .trending-item {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        border: 1px solid #e9ecef;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .trending-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .breaking-news {
+        background: #dc3545;
+        color: white;
+        padding: 0.75rem 0;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .breaking-news-label {
+        background: #fff;
+        color: #dc3545;
+        padding: 0.25rem 0.75rem;
+        font-weight: bold;
+        font-size: 0.875rem;
+        margin-right: 1rem;
+        border-radius: 3px;
+    }
+
+    .ticker-wrapper {
+        overflow: hidden;
+        width: 80%;
+    }
+
+    .ticker-content {
+        display: inline-flex;
+        white-space: nowrap;
+        animation: scroll 30s linear infinite;
+    }
+
+    @keyframes scroll {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: #e9ecef;
+    }
+
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .news-card {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+        height: 100%;
+    }
+
+    .news-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .news-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .news-content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 200px);
+    }
+
+    .news-category {
+        color: #3498db;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    .news-title {
+        margin: 0.5rem 0;
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .news-excerpt {
+        color: #666;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        flex-grow: 1;
+    }
+
+    .news-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.875rem;
+        color: #666;
+        margin-top: auto;
+    }
+
+    .events-section, .sports-section {
+        background-color: #f8f9fa;
+        padding: 3rem 0;
+        margin: 3rem 0;
+    }
+
+    .category-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        justify-content: center;
+    }
+
+    .category-pill {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 2rem;
+        padding: 0.5rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #495057;
+        transition: all 0.2s;
+    }
+
+    .category-pill:hover, .category-pill.active {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 768px) {
+        .hero-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .news-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .ticker-wrapper {
+            width: 70%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Breaking News -->
+    <div class="breaking-news">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <span class="breaking-news-label">BREAKING</span>
+                <div class="ticker-wrapper">
+                    <div class="ticker-content">
+                        {% for news in breaking_news %}
+                            <span class="me-4">{{ news }} •</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-main">
+                    <article class="hero-featured" style="background-image: url('{{ main_story.get_featured_image_url }}');">
+                        <div class="hero-content">
+                            <span class="badge bg-primary mb-2">{{ main_story.category.name }}</span>
+                            <h1 class="h2 fw-bold mb-3">{{ main_story.title }}</h1>
+                            <p class="mb-4">{{ main_story.excerpt }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-light">By {{ main_story.author.get_full_name }} • {{ main_story.publish_date }}</small>
+                                <a href="{% url 'news:detail' main_story.slug %}" class="btn btn-light">Read More <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="hero-sidebar">
+                    {% for story in trending_stories %}
+                        <article class="trending-item">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-danger me-2"><i class="bi bi-graph-up"></i> Trending</span>
+                                <span class="badge bg-secondary">{{ story.category.name }}</span>
+                            </div>
+                            <h3 class="h5 fw-bold mb-2">{{ story.title }}</h3>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ story.publish_date }}</small>
+                                <small class="text-muted"><i class="bi bi-eye"></i> {{ story.view_count }}</small>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Navigation -->
+    <div class="container mb-4">
+        <div class="category-pills">
+            <a href="#" class="category-pill active">All</a>
+            {% for category in categories %}
+                <a href="#" class="category-pill">{{ category.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Latest News Section -->
+    <section class="container mb-5">
+        <h2 class="section-title"><i class="bi bi-newspaper text-primary"></i> Latest News</h2>
+        <div class="news-grid">
+            {% for article in latest_news %}
+                <article class="news-card">
+                    <img src="{{ article.get_featured_image_url }}" alt="{{ article.title }}" class="news-image">
+                    <div class="news-content">
+                        <span class="news-category">{{ article.category.name }}</span>
+                        <h3 class="news-title">{{ article.title }}</h3>
+                        <p class="news-excerpt">{{ article.excerpt }}</p>
+                        <div class="news-meta">
+                            <span>By {{ article.author.get_full_name }}</span>
+                            <span>{{ article.publish_date }}</span>
+                        </div>
+                        <a href="{% url 'news:detail' article.slug %}" class="btn btn-outline-primary mt-3 w-100">Read More</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Sports Section -->
+    <section class="sports-section">
+        <div class="container">
+            <h2 class="section-title"><i class="bi bi-trophy text-warning"></i> Sports Headlines</h2>
+            <div class="row">
+                {% for sport in featured_sports %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="{{ sport.image_url }}" class="card-img-top" alt="{{ sport.name }}" style="height: 250px; object-fit: cover;">
+                            <div class="card-body">
+                                <span class="badge bg-warning text-dark mb-2">{{ sport.name }}</span>
+                                <h3 class="card-title h5 fw-bold">{{ sport.headline }}</h3>
+                                <a href="{% url 'sports:article_detail' sport.sport|lower %}" class="btn btn-outline-primary mt-3">Read More <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-4">
+                <a href="{% url 'sports:sport_list' %}" class="btn btn-primary">View All Sports <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="events-section">
+        <div class="container">
+            <h2 class="section-title"><i class="bi bi-calendar-event text-success"></i> Upcoming Events</h2>
+            <div class="row">
+                {% for event in featured_events %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}" style="height: 250px; object-fit: cover;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary">{{ event.date|date:"M d, Y" }}</span>
+                                    <div>
+                                        {% for tag in event.tags|slice:":2" %}
+                                            <span class="badge bg-light text-dark">{{ tag.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <h3 class="card-title h5 fw-bold">{{ event.title }}</h3>
+                                <p class="card-text text-muted small">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ event.venue_name }}
+                                </p>
+                                <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-outline-success mt-3">View Details <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-4">
+                <a href="{% url 'events:event_list' %}" class="btn btn-success">View All Events <i class="bi bi-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="container mb-5">
+        <div class="card bg-light border-0">
+            <div class="card-body p-5 text-center">
+                <h2 class="h3 mb-4">Subscribe to Our Newsletter</h2>
+                <p class="mb-4">Stay updated with the latest news, events, and exclusive content directly in your inbox.</p>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control form-control-lg" placeholder="Your email address" aria-label="Email address">
+                            <button class="btn btn-primary" type="button">Subscribe <i class="bi bi-envelope"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted small mt-3">We respect your privacy. Unsubscribe at any time.</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ event.title }} - Events{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Event detail styling */
+    .event-detail-banner {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .event-detail-banner-placeholder {
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 10px;
+        position: relative;
+    }
+    
+    .placeholder-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .placeholder-content {
+        text-align: center;
+        color: white;
+    }
+    
+    .placeholder-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .event-tag {
+        padding: 6px 12px;
+        border-radius: 20px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid;
+        display: inline-block;
+        transition: all 0.2s ease;
+    }
+    
+    .event-tag:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .event-meta-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .event-meta-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: #2a5298;
+    }
+    
+    .social-share-button {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #f8f9fa;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 5px;
+        color: #495057;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .social-share-button:hover {
+        transform: translateY(-3px);
+    }
+    
+    .social-share-button.facebook:hover {
+        background-color: #3b5998;
+        color: white;
+    }
+    
+    .social-share-button.twitter:hover {
+        background-color: #1da1f2;
+        color: white;
+    }
+    
+    .social-share-button.linkedin:hover {
+        background-color: #0077b5;
+        color: white;
+    }
+    
+    .social-share-button.whatsapp:hover {
+        background-color: #25d366;
+        color: white;
+    }
+    
+    .event-timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .event-timeline::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-bottom: 25px;
+    }
+    
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -30px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #2a5298;
+        border: 2px solid white;
+        box-shadow: 0 0 0 2px #2a5298;
+    }
+    
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+    
+    .related-event-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    
+    .related-event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'events:event_list' %}">Events</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ event.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Event Banner -->
+    <div class="row mb-4">
+        <div class="col-12">
+            {% if event.banner_image_url %}
+                <img src="{{ event.banner_image_url }}" class="event-detail-banner" alt="{{ event.title }}">
+            {% else %}
+                <!-- Dummy/Placeholder Image -->
+                <div class="event-detail-banner-placeholder">
+                    <div class="placeholder-overlay">
+                        <div class="placeholder-content">
+                            <i class="bi bi-calendar-event placeholder-icon"></i>
+                            <h3 class="placeholder-title">{{ event.title }}</h3>
+                            <p class="placeholder-subtitle">{{ event.date|date:"F j, Y" }} • {{ event.venue_name }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Event Header -->
+            <div class="mb-4 animate__animated animate__fadeIn">
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                    <div>
+                        {% for tag in event.tags %}
+                            <span class="event-tag" style="background-color: rgba(75, 85, 215, 0.1); color: #4b55d7; border-color: rgba(75, 85, 215, 0.2)">
+                                {{ tag.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-eye"></i> {{ event.views_count }} views
+                    </p>
+                </div>
+                
+                <h1 class="mb-3">{{ event.title }}</h1>
+                
+                <!-- Social Sharing -->
+                <div class="social-share-buttons mb-4">
+                    <span class="me-2 text-muted">Share:</span>
+                    <a href="#" target="_blank" class="social-share-button facebook" title="Share on Facebook">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="#" target="_blank" class="social-share-button twitter" title="Share on Twitter">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                    <a href="#" target="_blank" class="social-share-button linkedin" title="Share on LinkedIn">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                    <a href="#" target="_blank" class="social-share-button whatsapp" title="Share on WhatsApp">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                </div>
+                
+                <!-- Event Description -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">About This Event</h5>
+                        <p class="card-text">{{ event.description }}</p>
+                    </div>
+                </div>
+                
+                <!-- Event Schedule -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Event Schedule</h5>
+                        <div class="event-timeline">
+                            {% for item in event.schedule %}
+                                <div class="timeline-item">
+                                    <h6 class="fw-bold">{{ item.time }}</h6>
+                                    <p>{{ item.title }}</p>
+                                    {% if item.speaker %}
+                                        <p class="text-muted small">Speaker: {{ item.speaker }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Registration CTA -->
+                <div class="card bg-light border-0 mb-4">
+                    <div class="card-body text-center py-4">
+                        <h4 class="mb-3">Ready to join this event?</h4>
+                        <p class="mb-4">Secure your spot now! Join {{ event.registered_count }} others who have already registered.</p>
+                        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                            Register Now
+                        </button>
+                        <p class="small text-muted mt-3">
+                            <i class="bi bi-shield-check"></i>
+                            Secure registration • No payment required
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card sticky-top mb-4" style="top: 100px; z-index: 1000;">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Event Details</h5>
+                    
+                    <!-- Date & Time -->
+                    <div class="event-meta-item">
+                        <div class="event-meta-icon">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Date & Time</p>
+                            <p class="mb-0">{{ event.date|date:"F j, Y" }}<br>{{ event.time }} - {{ event.end_time }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Location -->
+                    <div class="event-meta-item">
+                        <div class="event-meta-icon">
+                            <i class="bi bi-geo-alt"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Location</p>
+                            <p class="mb-0">{{ event.venue_name }}<br>{{ event.venue_address }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Price -->
+                    <div class="event-meta-item">
+                        <div class="event-meta-icon">
+                            <i class="bi bi-tag"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Price</p>
+                            <p class="mb-0">
+                                {% if event.is_free %}
+                                    <span class="badge bg-success">Free Entry</span>
+                                {% else %}
+                                    {{ event.price }} per person
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Organizer -->
+                    <div class="event-meta-item">
+                        <div class="event-meta-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Organizer</p>
+                            <p class="mb-0">{{ event.host.name }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Registration Status -->
+                    <div class="event-meta-item">
+                        <div class="event-meta-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0 fw-bold">Registration</p>
+                            <div class="progress mb-2" style="height: 10px;">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     style="width: {{ event.registered_count|floatformat:0|default:0|mul:100|div:event.capacity|floatformat:0 }}%;" 
+                                     aria-valuenow="{{ event.registered_count }}" aria-valuemin="0" aria-valuemax="{{ event.capacity }}"></div>
+                            </div>
+                            <p class="mb-0 small">
+                                {{ event.registered_count }} / {{ event.capacity }} registered
+                                <span class="text-success ms-1">
+                                    ({{ event.capacity|add:-event.registered_count }} spots left)
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Map -->
+                    <div class="mt-4">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387193.3059353029!2d-74.25986548248684!3d40.697149419326654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1658904372334!5m2!1sen!2s" 
+                                width="100%" height="200" style="border:0; border-radius: 5px;" allowfullscreen="" loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                        <a href="{{ event.venue_map_url }}" target="_blank" class="btn btn-outline-primary btn-sm w-100 mt-2">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Open in Maps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Events -->
+    {% if related_events %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Similar Events You Might Like</h3>
+            <div class="row">
+                {% for related in related_events %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 related-event-card">
+                        <img src="{{ related.banner_image_url }}" class="card-img-top" alt="{{ related.title }}" style="height: 160px; object-fit: cover;">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                {% for tag in related.tags|slice:":2" %}
+                                <span class="badge" style="background-color: rgba(75, 85, 215, 0.1); color: #4b55d7;">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                            <h5 class="card-title">{{ related.title }}</h5>
+                            <p class="small text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>{{ related.date|date:"M j, Y" }}
+                                <span class="ms-2">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ related.venue_name }}
+                                </span>
+                            </p>
+                            <a href="{% url 'events:event_detail' related.slug %}" class="btn btn-outline-primary btn-sm mt-2">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Registration Modal -->
+<div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registrationModalLabel">Register for {{ event.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Your Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message (Optional)</label>
+                        <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                        <label class="form-check-label small" for="terms">
+                            I agree to the <a href="#">terms and conditions</a> and <a href="#">privacy policy</a>.
+                        </label>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Complete Registration</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if registration_success %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+    });
+</script>
+
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="successModalLabel">Registration Successful!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <i class="bi bi-check-circle-fill text-success display-1 mb-4"></i>
+                <h4>Thank You!</h4>
+                <p>Your registration for "{{ event.title }}" has been confirmed.</p>
+                <p>A confirmation email has been sent to your email address.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-success">Add to Calendar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

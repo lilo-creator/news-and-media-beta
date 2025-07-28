@@ -1,133 +1,206 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sports - News & Media{% endblock %}
 
 {% block extra_css %}
 <style>
-    .sports-hero {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        border-radius: 20px;
-        padding: 4rem 2rem;
-        margin-bottom: 3rem;
-        margin-top: 0;
-        color: white;
-        position: relative;
-        overflow: hidden;
+    /* Ensure main content area takes up minimum height to push footer down */
+    .main-content {
+        min-height: calc(100vh - 200px);
     }
     
-    .sports-hero::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
-        animation: float 20s infinite linear;
-    }
-    
-    @keyframes float {
-        0% { transform: translate(-50%, -50%) rotate(0deg); }
-        100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-    
+    /* Sport card styling */
     .sport-card {
         transition: all 0.3s ease;
         border: none;
-        border-radius: 15px;
-        margin-bottom: 2rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
         overflow: hidden;
-        background: white;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        height: 100%;
     }
     
     .sport-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }
     
-    .sport-image {
-        width: 100%;
-        height: 220px;
+    .sport-card img {
+        height: 200px;
         object-fit: cover;
-        border-radius: 0;
+        transition: transform 0.5s ease;
     }
     
-    .sport-content {
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        height: calc(100% - 220px);
+    .sport-card:hover img {
+        transform: scale(1.05);
     }
     
-    .sport-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2c3e50;
-        margin-bottom: 1rem;
-    }
-    
-    .sport-description {
-        color: #6c757d;
-        font-size: 1rem;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-        flex-grow: 1;
-    }
-    
-    .sport-btn {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        border: none;
-        border-radius: 25px;
-        padding: 0.75rem 2rem;
+    .category-badge {
+        font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+    }
+    
+    .article-card {
+        height: 100%;
         transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+    
+    .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .article-card img {
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .trending-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #ff6b6b, #ee5a52);
         color: white;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-        margin-top: auto;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
     }
     
-    .sport-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-        color: white;
-        text-decoration: none;
+    /* Search and filter styling */
+    .sports-search {
+        border-radius: 25px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
     }
     
-    .sports-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 2rem;
+    .sports-search:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
     
-    /* Ensure proper footer spacing */
-    .container {
-        padding-bottom: 4rem;
-    }
-    
-    @media (max-width: 768px) {
-        .sports-hero {
-            padding: 2rem 1rem;
+    /* Mobile sidebar navigation */
+    @media (max-width: 991.98px) {
+        .sports-sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 260px;
+            height: calc(100vh - 70px);
+            z-index: 1040;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 20px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
         
-        .sports-grid {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
+        .sports-sidebar.show {
+            transform: translateX(0);
         }
         
-        .sport-image {
-            height: 200px;
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1030;
+            display: none;
         }
         
-        .sport-content {
-            padding: 1.5rem;
+        .sidebar-backdrop.show {
+            display: block;
         }
         
-        .container {
-            padding-bottom: 3rem;
+        .sidebar-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #2a5298;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1050;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .sidebar-toggle-btn:focus {
+            outline: none;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .sidebar-header h5 {
+            color: white;
+            margin-bottom: 0;
+        }
+        
+        .sidebar-close {
+            color: rgba(255,255,255,0.7);
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .sidebar-close:hover {
+            color: white;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-nav .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-section {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-section-title {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
         }
     }
 </style>
@@ -135,91 +208,218 @@
 
 {% block content %}
 <div class="container">
-    <!-- Hero Section -->
-    <div class="sports-hero text-center">
-        <h1 class="display-4 fw-bold mb-3">Sports News</h1>
-        <p class="lead">Catch up on the latest from your favorite sports. Click a headline to read more about each sport, its teams, and top matches.</p>
-    </div>
-
-    <!-- Sports Grid -->
-    <div class="sports-grid">
-        <!-- Football -->
-        <div class="sport-card">
-            <img src="https://resources.premierleague.pulselive.com/photo-resources/2025/07/17/a3bb7df8-7c88-4b27-8cbe-2394dfdcbfc8/Haaland-Maguire.jpg?width=1440" 
-                 alt="Football" class="sport-image"/>
-            <div class="sport-content">
-                <h2 class="sport-title">Football</h2>
-                <p class="sport-description">Fixture amendments for Premier League matches in September. Stay updated with the latest transfers, match results, and player statistics from the world's most popular sport.</p>
-                <a href="/sports/article/football" class="sport-btn">
-                    Read more <i class="bi bi-arrow-right"></i>
-                </a>
+    <div class="main-content">
+        <!-- Hero Section -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Sports</h1>
+                <p class="lead text-muted">Stay updated with the latest sports news, match results, and highlights from around the world.</p>
+            </div>
+            <div class="col-lg-4">
+                <!-- Search Box -->
+                <div class="mt-3">
+                    <form method="GET" class="d-flex">
+                        <input type="search" name="search" class="form-control sports-search me-2" 
+                               placeholder="Search sports..." value="{{ request.GET.search }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <!-- Basketball -->
-        <div class="sport-card">
-            <img src="https://pbs.twimg.com/media/GwfIdbtXoAAOoi1?format=jpg&name=900x900" 
-                 alt="Basketball" class="sport-image"/>
-            <div class="sport-content">
-                <h2 class="sport-title">Basketball</h2>
-                <p class="sport-description">The LA Lakers and Chicago Bulls are set to face off in a highly anticipated NBA showdown this weekend. Follow the latest scores and highlights.</p>
-                <a href="/sports/article/basketball" class="sport-btn">
-                    Read more <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
+        <!-- Sports Categories -->
+        <div class="row">
+            {% if sports %}
+                {% for sport in sports %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card sport-card h-100">
+                            {% if sport.image %}
+                                {% if sport.image.url %}
+                                    <img src="{{ sport.image.url }}" class="card-img-top" alt="{{ sport.name }}">
+                                {% else %}
+                                    <img src="{{ sport.image }}" class="card-img-top" alt="{{ sport.name }}">
+                                {% endif %}
+                            {% else %}
+                                <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?q=80&w=2070&auto=format&fit=crop" class="card-img-top" alt="{{ sport.name }}">
+                            {% endif %}
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold">{{ sport.name }}</h5>
+                                {% if sport.description %}
+                                    <p class="card-text flex-grow-1 text-muted">{{ sport.description|truncatewords:20 }}</p>
+                                {% endif %}
+                                <div class="mt-auto">
+                                    <a href="{% url 'sports:sport_detail' sport.pk %}" class="btn btn-primary">
+                                        View Details <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>No sports categories found.
+                    </div>
+                </div>
+            {% endif %}
         </div>
-
-        <!-- Wrestling -->
-        <div class="sport-card">
-            <img src="https://static0.thesportsterimages.com/wordpress/wp-content/uploads/wm/2025/01/26-of-the-most-outrageous-lies-tall-tales-hulk-hogan-has-said.jpg" 
-                 alt="Wrestling" class="sport-image"/>
-            <div class="sport-content">
-                <h2 class="sport-title">Wrestling</h2>
-                <p class="sport-description">Wrestling legends and upcoming championship matches that are making headlines. Get the latest updates from WWE, AEW, and other major wrestling promotions.</p>
-                <a href="/sports/article/wrestling" class="sport-btn">
-                    Read more <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
-        </div>
-
-        <!-- Volleyball -->
-        <div class="sport-card">
-            <img src="https://i0.wp.com/dailysport.co.ke/wp-content/uploads/2019/09/GSU-vs-KDF-volleyball-in-Laikipia.jpg?resize=1042%2C642&ssl=1" 
-                 alt="Volleyball" class="sport-image"/>
-            <div class="sport-content">
-                <h2 class="sport-title">Volleyball</h2>
-                <p class="sport-description">Kenya's national team advances to the finals after a stunning victory in the African Championship. Follow international and domestic volleyball competitions.</p>
-                <a href="/sports/article/volleyball" class="sport-btn">
-                    Read more <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
-        </div>
-
-        <!-- Rugby -->
-        <div class="sport-card">
-            <img src="https://eu-cdn.rugbypass.com/webp-images/wp/wp-content/uploads/2025/07/Rieko-Ioane-Scott-Robertson-All-Blacks-vs-France-2025-1024x576.jpg.webp?maxw=766&comp=95" 
-                 alt="Rugby" class="sport-image"/>
-            <div class="sport-content">
-                <h2 class="sport-title">Rugby</h2>
-                <p class="sport-description">The Rugby World Cup qualifiers heat up as top teams battle for a spot in the tournament. Follow the latest matches and team rankings.</p>
-                <a href="/sports/article/rugby" class="sport-btn">
-                    Read more <i class="bi bi-arrow-right"></i>
-                </a>
-            </div>
-        </div>
-
-        <!-- Tennis -->
-        <div class="sport-card">
-            <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&h=600&fit=crop" 
-                 alt="Tennis" class="sport-image"/>
-            <div class="sport-content">
-                <h2 class="sport-title">Tennis</h2>
-                <p class="sport-description">Follow the latest from Grand Slam tournaments, ATP and WTA tours. Get updates on your favorite players and upcoming tennis events worldwide.</p>
-                <a href="/sports/article/tennis" class="sport-btn">
-                    Read more <i class="bi bi-arrow-right"></i>
-                </a>
+        
+        <!-- Latest Articles Section -->
+        <div class="mt-5">
+            <h2 class="mb-4">Latest Sports News</h2>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card article-card position-relative">
+                        <span class="trending-tag">
+                            <i class="bi bi-graph-up-arrow me-1"></i>Trending
+                        </span>
+                        <img src="https://resources.premierleague.com/photo-resources/2025/07/17/a3bb7df8-7c88-4b27-8cbe-2394dfdcbfc8/Haaland-Maguire.jpg?width=1440&height=810" class="card-img-top" alt="Football News">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-primary">Football</span>
+                            </div>
+                            <h5 class="card-title fw-bold">Manchester City clinched a dramatic win over Arsenal in a thrilling Premier League encounter</h5>
+                            <p class="card-text flex-grow-1 text-muted">Premier League fixtures for September have been announced with exciting matchups scheduled.</p>
+                            <div class="mt-auto">
+                                <a href="{% url 'sports:article_detail' 'football' %}" class="btn btn-outline-primary">Read More <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card article-card">
+                        <img src="https://cdn.nba.com/manage/2025/07/16x9First-Team-1-1568x882.png" class="card-img-top" alt="Basketball News">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-warning text-dark">Basketball</span>
+                            </div>
+                            <h5 class="card-title fw-bold">NBA 2K26 All-Summer League teams announced</h5>
+                            <p class="card-text flex-grow-1 text-muted">Charlotte Hornets defeated the Kings in the championship game closing the summer league.</p>
+                            <div class="mt-auto">
+                                <a href="{% url 'sports:article_detail' 'basketball' %}" class="btn btn-outline-primary">Read More <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card article-card">
+                        <img src="https://eu-cdn.rugbypass.com/webp-images/wp/wp-content/uploads/2024/11/All-Blacks-Italy-2024-1024x576.jpg.webp?maxw=766&comp=95" class="card-img-top" alt="Rugby News">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-success">Rugby</span>
+                            </div>
+                            <h5 class="card-title fw-bold">The Rugby World Cup qualifiers heat up as top teams battle for a spot</h5>
+                            <p class="card-text flex-grow-1 text-muted">South Africa, New Zealand, and England lead the qualifiers as teams prepare for the tournament.</p>
+                            <div class="mt-auto">
+                                <a href="{% url 'sports:article_detail' 'rugby' %}" class="btn btn-outline-primary">Read More <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Mobile Sidebar -->
+<div class="sports-sidebar" id="sportsSidebar">
+    <div class="sidebar-header">
+        <h5><i class="bi bi-trophy me-2"></i>Sports Menu</h5>
+        <button type="button" class="sidebar-close" id="closeSidebar">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    
+    <div class="sidebar-section">
+        <p class="sidebar-section-title">Categories</p>
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="bi bi-grid"></i>All Sports
+                </a>
+            </li>
+            {% for sport in sports %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:sport_detail' sport.pk %}">
+                    <i class="bi bi-trophy"></i>{{ sport.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="sidebar-section">
+        <p class="sidebar-section-title">Featured Articles</p>
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:article_detail' 'football' %}">
+                    <i class="bi bi-newspaper"></i>Football News
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:article_detail' 'basketball' %}">
+                    <i class="bi bi-newspaper"></i>Basketball News
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:article_detail' 'rugby' %}">
+                    <i class="bi bi-newspaper"></i>Rugby News
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:article_detail' 'volleyball' %}">
+                    <i class="bi bi-newspaper"></i>Volleyball News
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Sidebar Backdrop -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<!-- Sidebar Toggle Button -->
+<button class="sidebar-toggle-btn d-lg-none" id="toggleSidebar">
+    <i class="bi bi-list"></i>
+</button>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile sidebar functionality
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const closeBtn = document.getElementById('closeSidebar');
+        const sidebar = document.getElementById('sportsSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        
+        function openSidebar() {
+            sidebar.classList.add('show');
+            backdrop.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSidebar() {
+            sidebar.classList.remove('show');
+            backdrop.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        toggleBtn.addEventListener('click', openSidebar);
+        closeBtn.addEventListener('click', closeSidebar);
+        backdrop.addEventListener('click', closeSidebar);
+        
+        // Close sidebar on window resize to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992 && sidebar.classList.contains('show')) {
+                closeSidebar();
+            }
+        });
+    });
+</script>
 {% endblock %}

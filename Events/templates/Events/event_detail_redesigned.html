@@ -1,0 +1,508 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ event.title }} - Events{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        position: relative;
+        min-height: 50vh;
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding-top: 200px;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%);
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .event-info {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-top: -70px;
+        position: relative;
+        z-index: 3;
+    }
+    
+    .info-icon {
+        width: 50px;
+        height: 50px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        font-size: 1.5rem;
+    }
+    
+    .event-description {
+        line-height: 1.8;
+    }
+    
+    .schedule-timeline {
+        position: relative;
+    }
+    
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+        padding-left: 15px;
+    }
+    
+    .timeline-item:before {
+        content: '';
+        position: absolute;
+        left: -22px;
+        top: 0;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #007bff;
+        z-index: 1;
+    }
+    
+    .timeline-item:after {
+        content: '';
+        position: absolute;
+        left: -15px;
+        top: 15px;
+        bottom: 0;
+        width: 2px;
+        background: #e9ecef;
+    }
+    
+    .timeline-item:last-child:after {
+        display: none;
+    }
+    
+    .registration-card {
+        position: sticky;
+        top: 100px;
+    }
+    
+    .host-info {
+        display: flex;
+        align-items: center;
+    }
+    
+    .host-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 15px;
+    }
+    
+    .related-event-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .related-event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    }
+    
+    @media (max-width: 768px) {
+        .hero-section {
+            padding-top: 150px;
+        }
+        .event-info {
+            margin-top: -50px;
+        }
+    }
+    
+    .registration-progress {
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        background-color: #e9ecef;
+    }
+    
+    .registration-progress-bar {
+        height: 100%;
+        border-radius: 4px;
+        background-color: #28a745;
+    }
+    
+    .event-tag {
+        background: rgba(0,123,255,0.1);
+        color: #007bff;
+        border: 1px solid rgba(0,123,255,0.2);
+        border-radius: 30px;
+        padding: 5px 15px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        display: inline-block;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+    }
+    
+    .event-tag:hover {
+        background: rgba(0,123,255,0.2);
+        text-decoration: none;
+    }
+    
+    .modal-backdrop {
+        opacity: 0.7 !important;
+    }
+    
+    .registration-modal .modal-content {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: none;
+    }
+    
+    .registration-modal .modal-header {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .registration-modal .modal-footer {
+        border-top: none;
+        padding-top: 0;
+    }
+    
+    .share-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #6c757d;
+        margin-right: 10px;
+        transition: all 0.3s;
+    }
+    
+    .share-icon:hover {
+        transform: translateY(-3px);
+    }
+    
+    .share-icon.facebook:hover {
+        background-color: #3b5998;
+        color: white;
+    }
+    
+    .share-icon.twitter:hover {
+        background-color: #1da1f2;
+        color: white;
+    }
+    
+    .share-icon.linkedin:hover {
+        background-color: #0077b5;
+        color: white;
+    }
+    
+    .share-icon.email:hover {
+        background-color: #ea4335;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section" style="background-image: url('{{ event.banner_image_url }}');">
+    <div class="container hero-content">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="mb-3">
+                    {% for tag in event.tags %}
+                        <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+                <h1 class="fw-bold mb-2">{{ event.title }}</h1>
+                <p class="lead mb-4">{{ event.description|truncatechars:150 }}</p>
+                <div class="d-flex align-items-center">
+                    <div class="host-info me-4">
+                        <img src="{{ event.host.logo_url }}" alt="{{ event.host.name }}" class="host-logo">
+                        <div>
+                            <p class="mb-0 text-light">Organized by</p>
+                            <h6 class="mb-0 fw-bold">{{ event.host.name }}</h6>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="mb-0 text-light">{{ event.views_count }} people viewed this event</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Event Info Cards Section -->
+<div class="container">
+    <div class="row event-info p-4">
+        <div class="col-md-3 col-6 mb-3 mb-md-0 text-center">
+            <div class="d-flex flex-column align-items-center">
+                <div class="info-icon mb-2">
+                    <i class="bi bi-calendar-event"></i>
+                </div>
+                <h6 class="fw-bold mb-0">Date</h6>
+                <p class="mb-0">{{ event.date|date:"F d, Y" }}</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3 mb-md-0 text-center">
+            <div class="d-flex flex-column align-items-center">
+                <div class="info-icon mb-2">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <h6 class="fw-bold mb-0">Time</h6>
+                <p class="mb-0">{{ event.time }} - {{ event.end_time }}</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 text-center">
+            <div class="d-flex flex-column align-items-center">
+                <div class="info-icon mb-2">
+                    <i class="bi bi-geo-alt"></i>
+                </div>
+                <h6 class="fw-bold mb-0">Venue</h6>
+                <p class="mb-0">{{ event.venue_name }}</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 text-center">
+            <div class="d-flex flex-column align-items-center">
+                <div class="info-icon mb-2">
+                    <i class="bi bi-ticket-perforated"></i>
+                </div>
+                <h6 class="fw-bold mb-0">Price</h6>
+                <p class="mb-0">{{ event.price }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Left Content -->
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <!-- Description -->
+                <div class="mb-5">
+                    <h2 class="fw-bold mb-4">About This Event</h2>
+                    <div class="event-description">
+                        <p>{{ event.description }}</p>
+                        <p>Join us for an unforgettable experience at {{ event.title }}. This event brings together the best of {{ event.tags.0.name }} in a unique setting at {{ event.venue_name }}.</p>
+                        <p>Whether you're a seasoned professional or just starting out, this event offers valuable insights and networking opportunities for everyone interested in {{ event.tags.0.name }}.</p>
+                    </div>
+                </div>
+                
+                <!-- Schedule -->
+                <div class="mb-5">
+                    <h2 class="fw-bold mb-4">Event Schedule</h2>
+                    <div class="schedule-timeline">
+                        <div class="timeline">
+                            {% for item in event.schedule %}
+                            <div class="timeline-item">
+                                <h5 class="fw-bold">{{ item.title }}</h5>
+                                <p class="mb-0">{{ item.time }}</p>
+                                {% if item.speaker %}
+                                <p class="text-muted">Speaker: {{ item.speaker }}</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Location -->
+                <div class="mb-5">
+                    <h2 class="fw-bold mb-4">Location</h2>
+                    <p><i class="bi bi-geo-alt me-2"></i>{{ event.venue_name }} - {{ event.venue_address }}</p>
+                    <div class="ratio ratio-16x9 rounded overflow-hidden">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12345.67890!2d-122.4194!3d37.7749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f7e7!2zMzfCsDQ2JzMwLjEiTiAxMjLCsDI1JzA5LjQiVw!5e0!3m2!1sen!2sus!4v1234567890" 
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+                
+                <!-- Host Info -->
+                <div class="mb-5">
+                    <h2 class="fw-bold mb-4">Event Host</h2>
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ event.host.logo_url }}" alt="{{ event.host.name }}" 
+                                     class="host-logo me-3">
+                                <div>
+                                    <h5 class="fw-bold mb-1">{{ event.host.name }}</h5>
+                                    <p class="text-muted mb-0">Event Organizer</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <p>{{ event.host.name }} is dedicated to bringing high-quality events to our community. With years of experience in organizing successful events, we focus on creating memorable experiences for all attendees.</p>
+                            <a href="#" class="btn btn-outline-primary">More About the Organizer</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tags -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-3">Event Tags</h5>
+                    {% for tag in event.tags %}
+                    <a href="#" class="event-tag">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+                
+                <!-- Share Section -->
+                <div>
+                    <h5 class="fw-bold mb-3">Share This Event</h5>
+                    <div>
+                        <a href="#" class="share-icon facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="share-icon twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="share-icon linkedin"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="share-icon email"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Sidebar -->
+            <div class="col-lg-4">
+                <!-- Registration Card -->
+                <div class="card border-0 shadow registration-card mb-4">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">Registration</h5>
+                        
+                        {% if not event.is_free %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span>Ticket Price:</span>
+                            <span class="fw-bold">{{ event.price }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small">{{ event.registered_count }} / {{ event.capacity }} spots taken</span>
+                                <span class="small">{{ event.capacity|add:-event.registered_count }} spots left</span>
+                            </div>
+                            <div class="registration-progress">
+                                <div class="registration-progress-bar" style="width: {{ event.registered_count|divisibleby:event.capacity|floatformat:0 }}%;"></div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                            Register Now
+                        </button>
+                        
+                        <p class="small text-center text-muted mb-0">Registration closes on {{ event.date|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+                
+                <!-- Related Events -->
+                <div>
+                    <h5 class="fw-bold mb-3">Related Events</h5>
+                    {% for related in related_events %}
+                    <div class="card related-event-card mb-3">
+                        <img src="{{ related.banner_image_url }}" class="card-img-top" alt="{{ related.title }}" style="height: 120px; object-fit: cover;">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-2">{{ related.title }}</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar-event me-2 text-muted"></i>
+                                <span class="small text-muted">{{ related.date|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if related.is_free %}
+                                <span class="badge bg-success">Free</span>
+                                {% else %}
+                                <span class="fw-bold">{{ related.price }}</span>
+                                {% endif %}
+                                <a href="{% url 'events:event_detail' related.slug %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Registration Modal -->
+<div class="modal fade registration-modal" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="registrationModalLabel">Register for {{ event.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Enter your full name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number">
+                    </div>
+                    {% if not event.is_free %}
+                    <div class="mb-4">
+                        <label for="tickets" class="form-label">Number of Tickets</label>
+                        <select class="form-select" id="tickets">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    {% endif %}
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="termsCheck">
+                        <label class="form-check-label" for="termsCheck">I agree to the Terms and Conditions</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Complete Registration</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Calculate registration percentage properly (replace the simple placeholder)
+        const registeredCount = {{ event.registered_count }};
+        const capacity = {{ event.capacity }};
+        const percentFilled = (registeredCount / capacity) * 100;
+        
+        // Update the progress bar width
+        document.querySelector('.registration-progress-bar').style.width = percentFilled + '%';
+    });
+</script>
+{% endblock %}

@@ -269,8 +269,21 @@
     margin-bottom: 2rem;
   }
   
+  .stats-card {
+    padding: 1.25rem 0.75rem;
+    height: 100%;
+  }
+  
   .stats-card .display-6 {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
+  }
+  
+  .stats-card .text-muted {
+    font-size: 0.9rem;
+  }
+  
+  .stats-card .stats-icon i {
+    font-size: 1.5rem;
   }
   
   .social-share-buttons {

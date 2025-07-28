@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Events - News & Media{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ensure main content area takes up minimum height to push footer down */
+    .main-content {
+        min-height: calc(100vh - 200px);
+    }
+    
+    /* Event card styling */
+    .event-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .event-card img {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .event-card:hover img {
+        transform: scale(1.05);
+    }
+    
+    .event-date {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .free-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .section-header {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+    }
+
+    .section-header::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 50px;
+        height: 3px;
+        background: #007bff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Events</h1>
+    
+    <!-- Featured Events Section -->
+    <div class="mb-5">
+        <h2 class="section-header">Featured Events</h2>
+        <div class="row">
+            {% for event in featured_events %}
+            <div class="col-md-6 mb-4">
+                <div class="card event-card h-100">
+                    <div class="position-relative">
+                        <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}">
+                        <div class="event-date">
+                            <i class="bi bi-calendar-event me-1"></i> {{ event.date|date:"M d" }}
+                        </div>
+                        {% if event.is_free %}
+                        <div class="free-tag">
+                            <i class="bi bi-tag-fill me-1"></i> Free
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2">
+                            {% for tag in event.tags|slice:":3" %}
+                            <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                        <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                        <p class="card-text text-muted mb-3">{{ event.description|truncatechars:100 }}</p>
+                        <div class="mt-auto">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <span class="text-muted">{{ event.venue_name }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if event.price %}
+                                <span class="fw-bold">{{ event.price }}</span>
+                                {% else %}
+                                <span class="badge bg-success">Free</span>
+                                {% endif %}
+                                <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Upcoming Events Section -->
+    <div class="mb-5">
+        <h2 class="section-header">Upcoming Events</h2>
+        <div class="row">
+            {% for event in upcoming_events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card event-card">
+                    <div class="position-relative">
+                        <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}">
+                        <div class="event-date">
+                            <i class="bi bi-calendar-event me-1"></i> {{ event.date|date:"M d" }}
+                        </div>
+                        {% if event.is_free %}
+                        <div class="free-tag">
+                            <i class="bi bi-tag-fill me-1"></i> Free
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2">
+                            {% for tag in event.tags|slice:":2" %}
+                            <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                        <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                        <p class="card-text text-muted mb-3">{{ event.description|truncatechars:80 }}</p>
+                        <div class="mt-auto">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <span class="text-muted">{{ event.venue_name }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                {% if event.price %}
+                                <span class="fw-bold">{{ event.price }}</span>
+                                {% else %}
+                                <span class="badge bg-success">Free</span>
+                                {% endif %}
+                                <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Past Events Section -->
+    <div>
+        <h2 class="section-header">Past Events</h2>
+        <div class="row">
+            {% for event in past_events %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card event-card">
+                    <div class="position-relative">
+                        <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}" style="filter: grayscale(50%);">
+                        <div class="event-date">
+                            <i class="bi bi-calendar-event me-1"></i> {{ event.date|date:"M d" }}
+                        </div>
+                        <div class="free-tag" style="background: linear-gradient(45deg, #e74c3c, #c0392b);">
+                            <i class="bi bi-calendar-check-fill me-1"></i> Completed
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-2">
+                            {% for tag in event.tags|slice:":2" %}
+                            <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                        <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                        <p class="card-text text-muted mb-3">{{ event.description|truncatechars:80 }}</p>
+                        <div class="mt-auto">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>
+                                <span class="text-muted">{{ event.venue_name }}</span>
+                            </div>
+                            <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-outline-secondary btn-sm w-100">View Recap</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

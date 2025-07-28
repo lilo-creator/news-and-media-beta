@@ -1,0 +1,683 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Events - News & Media{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ensure main content area takes up minimum height to push footer down */
+    .main-content {
+        min-height: calc(100vh - 200px);
+    }
+    
+    /* Event card styling */
+    .event-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Ensure equal height */
+    }
+    
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .event-card img {
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+        width: 100%; /* Ensure full width */
+    }
+    
+    .event-card:hover img {
+        transform: scale(1.05);
+    }
+    
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1; /* Take up remaining space */
+    }
+    
+    .category-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .event-date {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .upcoming-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #2ecc71, #27ae60);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .sold-out-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #e74c3c, #c0392b);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .free-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    /* Search and filter styling */
+    .events-search {
+        border-radius: 25px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .events-search:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .filter-btn {
+        border-radius: 25px;
+        background-color: white;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-btn:hover, .filter-btn.active {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
+    
+    /* Mobile sidebar navigation */
+    @media (max-width: 991.98px) {
+        .events-sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 260px;
+            height: calc(100vh - 70px);
+            z-index: 1040;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 20px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        
+        .events-sidebar.show {
+            transform: translateX(0);
+        }
+        
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1030;
+            display: none;
+        }
+        
+        .sidebar-backdrop.show {
+            display: block;
+        }
+        
+        .sidebar-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #2a5298;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1050;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .sidebar-toggle-btn:focus {
+            outline: none;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .sidebar-header h5 {
+            color: white;
+            margin-bottom: 0;
+        }
+        
+        .sidebar-close {
+            color: rgba(255,255,255,0.7);
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .sidebar-close:hover {
+            color: white;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-nav .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-section {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-section-title {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+    }
+
+    .category-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .category-list .btn {
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+    
+    .category-list .btn:hover, .category-list .btn.active {
+        background-color: #007bff;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .section-header {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+    }
+
+    .section-header::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 50px;
+        height: 3px;
+        background: #007bff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 main-content">
+    <div class="row">
+        <!-- Sidebar for desktop -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-4"><i class="bi bi-search me-2"></i>Find Events</h5>
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control events-search" placeholder="Search events...">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Event Categories</h6>
+                            <div class="category-list">
+                                <button class="btn btn-outline-primary active">All</button>
+                                <button class="btn btn-outline-primary">Music</button>
+                                <button class="btn btn-outline-primary">Technology</button>
+                                <button class="btn btn-outline-primary">Sports</button>
+                                <button class="btn btn-outline-primary">Art</button>
+                                <button class="btn btn-outline-primary">Food</button>
+                                <button class="btn btn-outline-primary">Education</button>
+                                <button class="btn btn-outline-primary">Business</button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Date Range</h6>
+                            <select class="form-select mb-2">
+                                <option selected>Any Date</option>
+                                <option>Today</option>
+                                <option>This Week</option>
+                                <option>This Weekend</option>
+                                <option>This Month</option>
+                                <option>Next Month</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Location</h6>
+                            <input type="text" class="form-control mb-2" placeholder="City or venue...">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="fw-bold">Price</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="priceAny">
+                                <label class="form-check-label" for="priceAny">Any Price</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="priceFree">
+                                <label class="form-check-label" for="priceFree">Free Events</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="pricePaid">
+                                <label class="form-check-label" for="pricePaid">Paid Events</label>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile sidebar (hidden by default) -->
+        <div class="events-sidebar">
+            <div class="sidebar-header">
+                <h5>Events Menu</h5>
+                <button class="sidebar-close"><i class="bi bi-x-lg"></i></button>
+            </div>
+            
+            <div class="sidebar-section">
+                <h6 class="sidebar-section-title">Search Events</h6>
+                <form>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Search events..." style="background: rgba(255,255,255,0.1); border: none; color: white;">
+                        <button class="btn btn-outline-light" type="button"><i class="bi bi-search"></i></button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="sidebar-section">
+                <h6 class="sidebar-section-title">Categories</h6>
+                <div class="sidebar-nav">
+                    <a href="#" class="nav-link active">
+                        <i class="bi bi-grid"></i> All Events
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-music-note-beamed"></i> Music
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-laptop"></i> Technology
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-trophy"></i> Sports
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-palette"></i> Art
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-cup-hot"></i> Food
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-book"></i> Education
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-briefcase"></i> Business
+                    </a>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h6 class="sidebar-section-title">Time Period</h6>
+                <div class="sidebar-nav">
+                    <a href="#" class="nav-link active">
+                        <i class="bi bi-calendar-date"></i> Any Date
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-calendar-day"></i> Today
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-calendar-week"></i> This Week
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-calendar-check"></i> This Weekend
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-calendar-month"></i> This Month
+                    </a>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <h6 class="sidebar-section-title">Price</h6>
+                <div class="sidebar-nav">
+                    <a href="#" class="nav-link active">
+                        <i class="bi bi-cash-coin"></i> Any Price
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-tag"></i> Free Events
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-wallet2"></i> Paid Events
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-backdrop"></div>
+        
+        <!-- Main content area -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Events</h1>
+                <div class="d-flex gap-2">
+                    <div class="d-none d-md-block">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary active"><i class="bi bi-grid-3x3-gap-fill"></i> Grid</button>
+                            <button type="button" class="btn btn-outline-primary"><i class="bi bi-list-ul"></i> List</button>
+                        </div>
+                    </div>
+                    <div class="d-lg-none">
+                        <button type="button" class="btn btn-primary" id="show-filters-btn">
+                            <i class="bi bi-funnel-fill"></i> Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick filters for mobile and desktop -->
+            <div class="mb-4">
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="filter-btn px-3 py-2 active"><i class="bi bi-calendar-event me-1"></i> All Events</button>
+                    <button class="filter-btn px-3 py-2"><i class="bi bi-calendar-check me-1"></i> Today</button>
+                    <button class="filter-btn px-3 py-2"><i class="bi bi-calendar-week me-1"></i> This Weekend</button>
+                    <button class="filter-btn px-3 py-2"><i class="bi bi-cash me-1"></i> Free</button>
+                    <button class="filter-btn px-3 py-2"><i class="bi bi-geo-alt me-1"></i> Nearby</button>
+                </div>
+            </div>
+            
+            <!-- Featured Events Section -->
+            <div class="mb-5">
+                <h2 class="section-header">Featured Events</h2>
+                <div class="row">
+                    {% if featured_events %}
+                        {% for event in featured_events %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card event-card h-100">
+                                <div class="position-relative">
+                                    <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}">
+                                    <div class="event-date">
+                                        <i class="bi bi-calendar-event me-1"></i> {{ event.date|date:"M d" }}
+                                    </div>
+                                    {% if event.is_free %}
+                                    <div class="free-tag">
+                                        <i class="bi bi-tag-fill me-1"></i> Free
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-2">
+                                        {% for tag in event.tags|slice:":3" %}
+                                        <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                                    <p class="card-text text-muted mb-3">{{ event.description|truncatechars:100 }}</p>
+                                    <div class="mt-auto">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <i class="bi bi-geo-alt text-muted me-2"></i>
+                                            <span class="text-muted">{{ event.venue_name }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            {% if event.price %}
+                                            <span class="fw-bold">{{ event.price }}</span>
+                                            {% else %}
+                                            <span class="badge bg-success">Free</span>
+                                            {% endif %}
+                                            <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">No featured events available at this time.</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Upcoming Events Section -->
+            <div class="mb-5">
+                <h2 class="section-header">Upcoming Events</h2>
+                <div class="row">
+                    {% if upcoming_events %}
+                        {% for event in upcoming_events %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card event-card h-100">
+                                <div class="position-relative">
+                                    <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}">
+                                    <div class="event-date">
+                                        <i class="bi bi-calendar-event me-1"></i> {{ event.date|date:"M d" }}
+                                    </div>
+                                    {% if event.is_free %}
+                                    <div class="free-tag">
+                                        <i class="bi bi-tag-fill me-1"></i> Free
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-2">
+                                        {% for tag in event.tags|slice:":2" %}
+                                        <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                                    <p class="card-text text-muted mb-3">{{ event.description|truncatechars:80 }}</p>
+                                    <div class="mt-auto">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <i class="bi bi-geo-alt text-muted me-2"></i>
+                                            <span class="text-muted">{{ event.venue_name }}</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            {% if event.price %}
+                                            <span class="fw-bold">{{ event.price }}</span>
+                                            {% else %}
+                                            <span class="badge bg-success">Free</span>
+                                            {% endif %}
+                                            <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">No upcoming events available at this time.</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Past Events Section -->
+            <div>
+                <h2 class="section-header">Past Events</h2>
+                <div class="row">
+                    {% if past_events %}
+                        {% for event in past_events %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card event-card h-100">
+                                <div class="position-relative">
+                                    <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}" style="filter: grayscale(50%);">
+                                    <div class="event-date">
+                                        <i class="bi bi-calendar-event me-1"></i> {{ event.date|date:"M d" }}
+                                    </div>
+                                    <div class="sold-out-tag">
+                                        <i class="bi bi-calendar-check-fill me-1"></i> Completed
+                                    </div>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-2">
+                                        {% for tag in event.tags|slice:":2" %}
+                                        <span class="badge bg-light text-dark me-1">{{ tag.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <h5 class="card-title fw-bold">{{ event.title }}</h5>
+                                    <p class="card-text text-muted mb-3">{{ event.description|truncatechars:80 }}</p>
+                                    <div class="mt-auto">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <i class="bi bi-geo-alt text-muted me-2"></i>
+                                            <span class="text-muted">{{ event.venue_name }}</span>
+                                        </div>
+                                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-outline-secondary btn-sm w-100">View Recap</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">No past events available.</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile sidebar toggle button -->
+<button class="sidebar-toggle-btn d-lg-none">
+    <i class="bi bi-list fs-4"></i>
+</button>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile sidebar toggle functionality
+        const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
+        const sidebarCloseBtn = document.querySelector('.sidebar-close');
+        const sidebar = document.querySelector('.events-sidebar');
+        const backdrop = document.querySelector('.sidebar-backdrop');
+        const showFiltersBtn = document.querySelector('#show-filters-btn');
+        
+        if (sidebarToggleBtn) {
+            sidebarToggleBtn.addEventListener('click', function() {
+                sidebar.classList.add('show');
+                backdrop.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        
+        if (showFiltersBtn) {
+            showFiltersBtn.addEventListener('click', function() {
+                sidebar.classList.add('show');
+                backdrop.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        
+        if (sidebarCloseBtn) {
+            sidebarCloseBtn.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                backdrop.classList.remove('show');
+                document.body.style.overflow = '';
+            });
+        }
+        
+        if (backdrop) {
+            backdrop.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                backdrop.classList.remove('show');
+                document.body.style.overflow = '';
+            });
+        }
+        
+        // Filter buttons toggle
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %}

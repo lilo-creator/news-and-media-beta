@@ -10,46 +10,13 @@ from .models import Event, EventTag, EventHost, EventRegistration
 from .forms import EventForm, EventHostForm, EventRegistrationForm
 
 def event_list(request):
-    """Display all active events."""
-    now = timezone.now().date()
-    
-    # Get all events for general stats
-    all_events = Event.objects.filter(is_active=True).order_by('-date')
-    
-    # Separate events by date
-    upcoming_events = Event.objects.filter(is_active=True, date__gte=now).order_by('date')
-    past_events = Event.objects.filter(is_active=True, date__lt=now).order_by('-date')
-    featured_events = Event.objects.filter(is_featured=True, is_active=True).order_by('-date')
-    
-    # Filter by tag if specified
-    tag_slug = request.GET.get('tag')
-    if tag_slug:
-        upcoming_events = upcoming_events.filter(tags__slug=tag_slug)
-        past_events = past_events.filter(tags__slug=tag_slug)
-        featured_events = featured_events.filter(tags__slug=tag_slug)
-        all_events = all_events.filter(tags__slug=tag_slug)
-    
-    # Search functionality
-    query = request.GET.get('q')
-    if query:
-        search_filter = Q(title__icontains=query) | Q(description__icontains=query) | Q(venue_name__icontains=query)
-        upcoming_events = upcoming_events.filter(search_filter)
-        past_events = past_events.filter(search_filter)
-        featured_events = featured_events.filter(search_filter)
-        all_events = all_events.filter(search_filter)
-    
-    # Get all tags for filter
-    tags = EventTag.objects.all()
-    
+    """
+    Display events page with hardcoded dummy data.
+    No database queries are made - all data is hardcoded in the templates.
+    """
+    # Just render the template with no context - data is hardcoded
     context = {
-        'upcoming_events': upcoming_events[:12],  # Limit to 12 for performance
-        'past_events': past_events[:12],
-        'featured_events': featured_events[:8],
-        'all_events': all_events[:24],
-        'tags': tags,
-        'current_tag': tag_slug,
-        'search_query': query,
-        'total_events': all_events.count(),
+        # Empty context - all data is hardcoded in the template
     }
     
     return render(request, 'Events/event_list.html', context)
@@ -161,45 +128,25 @@ def create_host(request):
     return render(request, 'Events/create_host.html', context)
 
 def events_by_tag(request, slug):
-    """Display events filtered by tag."""
-    tag = get_object_or_404(EventTag, slug=slug)
-    events = Event.objects.filter(tags=tag, is_active=True, date__gte=timezone.now().date())
-    
-    paginator = Paginator(events, 12)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    context = {
-        'tag': tag,
-        'page_obj': page_obj,
-    }
-    
-    return render(request, 'Events/events_by_tag.html', context)
+    """
+    Display events filtered by tag - redirects to main event list since we're using hardcoded data.
+    """
+    # Just redirect to the main event list page
+    return redirect('events:event_list')
 
 def events_by_host(request, host_id):
-    """Display events filtered by host."""
-    host = get_object_or_404(EventHost, id=host_id)
-    events = Event.objects.filter(host=host, is_active=True, date__gte=timezone.now().date())
-    
-    paginator = Paginator(events, 12)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    context = {
-        'host': host,
-        'page_obj': page_obj,
-    }
-    
-    return render(request, 'Events/events_by_host.html', context)
+    """
+    Display events filtered by host - redirects to main event list since we're using hardcoded data.
+    """
+    # Just redirect to the main event list page
+    return redirect('events:event_list')
 
 def sitemap_xml(request):
-    """Generate XML sitemap for better SEO."""
-    events = Event.objects.filter(is_active=True)
-    tags = EventTag.objects.all()
-    
+    """
+    Generate XML sitemap with hardcoded entries since we're using dummy data.
+    """
     context = {
-        'events': events,
-        'tags': tags,
+        # No context needed - hardcoded values in template
     }
     
     response = render(request, 'Events/sitemap.xml', context)

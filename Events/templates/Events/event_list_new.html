@@ -66,13 +66,6 @@
                 Connect, learn, and create memories that last a lifetime.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'events:create_event' %}" 
-                       class="inline-flex items-center px-10 py-4 bg-white text-primary font-bold rounded-full text-lg hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
-                        <i class="bi bi-plus-circle mr-3 text-xl"></i>
-                        Create Event
-                    </a>
-                {% endif %}
                 <a href="#upcoming-events" 
                    class="inline-flex items-center px-10 py-4 bg-white/20 backdrop-blur-sm text-white font-bold rounded-full text-lg hover:bg-white/30 transform hover:scale-105 transition-all duration-300 border-2 border-white/30">
                     <i class="bi bi-calendar-plus mr-3 text-xl"></i>

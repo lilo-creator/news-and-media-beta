@@ -1,0 +1,59 @@
+/* Sports responsive fixes */
+.sports-hero {
+    margin-top: 1.5rem !important;
+}
+
+/* Card enhancements */
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 0.75rem 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.upcoming-match {
+    transition: all 0.3s ease;
+}
+
+.upcoming-match:hover {
+    background-color: #e9fff0 !important;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .sports-hero {
+        padding: 2rem 1rem !important;
+        margin-top: 1rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    /* Order sidebar above content on mobile */
+    .order-lg-2 {
+        margin-bottom: 1.5rem;
+    }
+}

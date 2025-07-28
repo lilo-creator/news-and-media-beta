@@ -172,17 +172,6 @@
             </p>
             
             <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                {% if user.is_authenticated %}
-                <a href="{% url 'events:create_event' %}" 
-                   class="group px-8 py-4 bg-white text-gray-800 font-bold rounded-full text-lg hover:bg-gray-100 transition-all duration-300 shadow-2xl hover:shadow-white/20 neon-glow">
-                    <span class="flex items-center">
-                        <svg class="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
-                        </svg>
-                        Create Event
-                    </span>
-                </a>
-                {% endif %}
                 <a href="#events-grid" 
                    class="px-8 py-4 glass-effect text-white font-bold rounded-full text-lg hover:bg-white/20 transition-all duration-300">
                     <span class="flex items-center">

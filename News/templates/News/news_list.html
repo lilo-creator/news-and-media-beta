@@ -53,8 +53,23 @@
     
     .category-filter .btn {
         border-radius: 20px;
-        margin: 0 0.25rem;
+        margin: 0.4rem 0.25rem;
+        padding: 0.5rem 1rem;
         font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .category-filter .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .category-filter {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0.75rem;
     }
     
     .no-articles {
@@ -105,9 +120,9 @@
             </div>
         </div>
 
-        {% if news_list %}
+        {% if articles %}
             <div class="row">
-                {% for article in news_list %}
+                {% for article in articles %}
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="card h-100 news-card">
                             <img src="{{ article.get_featured_image_url }}" class="card-img-top" alt="{{ article.title }}" style="height: 200px; object-fit: cover;">
@@ -122,12 +137,12 @@
                                 </div>
                                 <h5 class="card-title fw-bold">{{ article.title }}</h5>
                                 {% if article.excerpt %}
-                                    <p class="card-text flex-grow-1 text-muted">{{ article.excerpt|truncatewords:25 }}</p>
+                                    <p class="card-text flex-grow-1 text-muted">{{ article.excerpt }}</p>
                                 {% endif %}
                                 <div class="mt-auto">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <small class="text-muted">
-                                            <i class="bi bi-calendar3 me-1"></i>{{ article.publish_date|date:"M j, Y" }}
+                                            <i class="bi bi-calendar3 me-1"></i>{{ article.publish_date }}
                                         </small>
                                         <small class="text-muted">
                                             <i class="bi bi-eye me-1"></i>{{ article.view_count }} views
@@ -135,7 +150,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted">
-                                            <i class="bi bi-person me-1"></i>{{ article.author.get_full_name|default:article.author.username }}
+                                            <i class="bi bi-person me-1"></i>{{ article.author.get_full_name }}
                                         </small>
                                         <a href="{% url 'news:detail' article.slug %}" class="btn btn-primary btn-sm">
                                             Read More <i class="bi bi-arrow-right"></i>
@@ -149,32 +164,32 @@
             </div>
 
             <!-- Pagination -->
-            {% if is_paginated %}
+            {% if pagination %}
                 <nav aria-label="Page navigation" class="mt-5">
                     <ul class="pagination justify-content-center">
-                        {% if page_obj.has_previous %}
+                        {% if pagination.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                <a class="page-link" href="?page={{ pagination.previous_page }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
                                     <i class="bi bi-chevron-left"></i> Previous
                                 </a>
                             </li>
                         {% endif %}
 
-                        {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
+                        {% for num in pagination.page_range %}
+                            {% if pagination.current_page == num %}
                                 <li class="page-item active">
                                     <span class="page-link">{{ num }}</span>
                                 </li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            {% elif num > pagination.current_page|add:'-3' and num < pagination.current_page|add:'3' %}
                                 <li class="page-item">
                                     <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
                                 </li>
                             {% endif %}
                         {% endfor %}
 
-                        {% if page_obj.has_next %}
+                        {% if pagination.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
+                                <a class="page-link" href="?page={{ pagination.next_page }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">
                                     Next <i class="bi bi-chevron-right"></i>
                                 </a>
                             </li>

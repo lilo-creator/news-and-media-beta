@@ -1,0 +1,51 @@
+{% comment %}
+    This template creates JSON-LD structured data for events to improve SEO.
+    
+    Usage:
+    {% include 'Events/components/event_schema.html' with event=event %}
+    
+    Parameters:
+    - event: The Event object to create schema for
+{% endcomment %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "{{ event.title }}",
+  "description": "{{ event.description|truncatewords:100 }}",
+  "startDate": "{{ event.date|date:'c' }}T{{ event.start_time|time:'H:i:s' }}",
+  "endDate": "{{ event.date|date:'c' }}T{{ event.end_time|time:'H:i:s' }}",
+  "eventStatus": "https://schema.org/EventScheduled",
+  {% if event.banner_image %}
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ event.banner_image.url }}",
+  {% elif event.banner_image_url %}
+  "image": "{{ event.banner_image_url }}",
+  {% endif %}
+  "location": {
+    "@type": "Place",
+    "name": "{{ event.venue_name }}",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "{{ event.venue_address }}"
+    }
+  },
+  "organizer": {
+    "@type": "Organization",
+    "name": "{{ event.host.name }}",
+    "email": "{{ event.host.contact_email }}"
+    {% if event.host.logo %}
+    ,"logo": "{{ request.scheme }}://{{ request.get_host }}{{ event.host.logo.url }}"
+    {% elif event.host.logo_url %}
+    ,"logo": "{{ event.host.logo_url }}"
+    {% endif %}
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "{{ event.ticket_price|default:'Free Entry' }}",
+    "priceCurrency": "USD",
+    "url": "{{ request.build_absolute_uri }}",
+    "availability": "https://schema.org/InStock"
+  }
+}
+</script>

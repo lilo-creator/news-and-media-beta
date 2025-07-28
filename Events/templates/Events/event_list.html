@@ -2,136 +2,57 @@
 
 {% block title %}Events - News & Media{% endblock %}
 
+{% block meta %}
+<!-- Enhanced SEO meta tags for better discoverability -->
+<meta name="description" content="Discover and join amazing events in your community. From workshops to celebrations, find what interests you.">
+<meta property="og:title" content="Events - News & Media">
+<meta property="og:description" content="Discover and join amazing events in your community. From workshops to celebrations, find what interests you.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="News & Media">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Events - News & Media">
+<meta name="twitter:description" content="Discover and join amazing events in your community. From workshops to celebrations, find what interests you.">
+{% endblock %}
+
 {% block extra_css %}
-<style>
-    /* Base styles */
-    body {
-        background-color: #f8fafc;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    
-    /* Hero section */
-    .events-hero {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 20px;
-        padding: 4rem 2rem;
-        margin-bottom: 3rem;
-        margin-top: 0;
-        color: white;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .events-hero::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
-        animation: float 20s infinite linear;
-    }
-    
-    @keyframes float {
-        0% { transform: translate(-50%, -50%) rotate(0deg); }
-        100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-    
-    /* Card styling */
-    .event-card {
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        height: 100%;
-        overflow: hidden;
-    }
-    
-    .event-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* Tab button styling */
-    .tab-button {
-        transition: all 0.3s ease;
-        border-radius: 30px;
-        padding: 10px 20px;
-        margin: 0 5px;
-        font-weight: 600;
-    }
-    
-    .tab-button.active {
-        background-color: #007bff;
-        color: white;
-        box-shadow: 0 3px 10px rgba(0, 123, 255, 0.3);
-    }
-    
-    /* Stats card */
-    .stats-card {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease;
-        padding: 1.5rem;
-    }
-    
-    .stats-card:hover {
-        transform: translateY(-5px);
-    }
-    
-    /* Badge styling */
-    .badge {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-weight: 600;
-    }
-    
-    .featured-badge {
-        background-color: #fbbf24;
-        color: #92400e;
-    }
-    
-    .completed-badge {
-        background-color: #10b981;
-        color: white;
-    }
-    
-    /* Helper classes */
-    .hidden {
-        display: none !important;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .events-hero {
-            padding: 2rem 1rem;
-        }
-        
-        .tab-button {
-            margin-bottom: 10px;
-        }
-    }
-</style>
+{% load static %}
+<link rel="stylesheet" href="{% static 'Events/css/events.css' %}">
+<link rel="stylesheet" href="{% static 'Events/css/enhanced-events.css' %}">
+<!-- Add animation library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <!-- Hero Section -->
-    <div class="events-hero text-center">
-        <h1 class="display-4 fw-bold mb-3">Events & Experiences</h1>
-        <p class="lead">Discover and join amazing events in your community. From workshops to celebrations, find what interests you.</p>
+    <div class="events-hero text-center animate__animated animate__fadeIn">
+        <h1 class="display-4 fw-bold mb-3">Discover Amazing Events</h1>
+        <p class="lead mb-4">Join exciting events in your community. Find activities, workshops, and celebrations that match your interests.</p>
+        
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 col-lg-6">
+                <!-- Search box -->
+                <form method="get" action="{% url 'events:event_list' %}" class="mb-4">
+                    <div class="input-group mb-3">
+                        <input type="text" name="q" class="form-control form-control-lg" placeholder="Search for events..." 
+                               value="{{ search_query|default:'' }}" aria-label="Search for events">
+                        <button class="btn btn-light" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
         
         <div class="mt-4">
             {% if user.is_authenticated %}
             <a href="{% url 'events:create_event' %}" 
-               class="btn btn-light me-3">
+               class="btn btn-light btn-lg me-3 animate__animated animate__pulse animate__infinite animate__slower">
                 <i class="bi bi-plus-circle"></i> Create Event
             </a>
             {% endif %}
             <a href="#events-section" 
-               class="btn btn-outline-light">
+               class="btn btn-outline-light btn-lg">
                 <i class="bi bi-calendar-event"></i> Browse Events
             </a>
         </div>
@@ -139,28 +60,40 @@
 
     <!-- Stats Section -->
     <div class="row mb-5">
-        <div class="col-md-3 mb-4">
+        <div class="col-md-3 mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
             <div class="stats-card text-center">
                 <div class="text-primary display-6 fw-bold mb-1">{{ upcoming_events|length }}</div>
-                <div class="text-muted">Upcoming</div>
+                <div class="text-muted">Upcoming Events</div>
+                <div class="stats-icon">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4">
+        <div class="col-md-3 mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
             <div class="stats-card text-center">
                 <div class="text-primary display-6 fw-bold mb-1">{{ past_events|length }}</div>
                 <div class="text-muted">Past Events</div>
+                <div class="stats-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4">
+        <div class="col-md-3 mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
             <div class="stats-card text-center">
                 <div class="text-primary display-6 fw-bold mb-1">{{ featured_events|length }}</div>
-                <div class="text-muted">Featured</div>
+                <div class="text-muted">Featured Events</div>
+                <div class="stats-icon">
+                    <i class="bi bi-star"></i>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4">
+        <div class="col-md-3 mb-4 animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
             <div class="stats-card text-center">
                 <div class="text-primary display-6 fw-bold mb-1">{{ total_events }}</div>
-                <div class="text-muted">Total</div>
+                <div class="text-muted">Total Events</div>
+                <div class="stats-icon">
+                    <i class="bi bi-calendar2-event"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -185,56 +118,23 @@
         </div>
     </div>
 
-    <!-- Events Sections -->
-    <div id="events-section">
+    <!-- Events Content -->
+    <div class="row">
+        <!-- Sidebar Filter Panel -->
+        <div class="col-lg-3 d-none d-lg-block">
+            {% include 'Events/components/filter_sidebar.html' with tags=tags current_tag=current_tag %}
+        </div>
+        
+        <!-- Events Sections -->
+        <div class="col-lg-9" id="events-section">
         <!-- Upcoming Events -->
         <div id="upcoming-events" class="event-section">
             <h2 class="mb-4">Upcoming Events</h2>
             <div class="row">
                 {% if upcoming_events %}
                     {% for event in upcoming_events %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 event-card">
-                            {% if event.banner_image %}
-                                <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
-                            {% elif event.banner_image_url %}
-                                <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
-                            {% else %}
-                                <div class="card-img-top bg-primary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
-                                    <div class="text-center">
-                                        <i class="bi bi-calendar-event fs-1"></i>
-                                        <p class="mt-2 mb-0">{{ event.title|truncatechars:20 }}</p>
-                                    </div>
-                                </div>
-                            {% endif %}
-                            <div class="card-body d-flex flex-column">
-                                <div class="mb-2">
-                                    {% if event.is_featured %}
-                                        <span class="badge bg-warning me-2">
-                                            <i class="bi bi-star-fill me-1"></i>Featured
-                                        </span>
-                                    {% endif %}
-                                    <span class="badge bg-primary">{{ event.date|date:"M d" }}</span>
-                                </div>
-                                <h5 class="card-title fw-bold">{{ event.title }}</h5>
-                                <p class="card-text flex-grow-1 text-muted">{{ event.description|truncatewords:20 }}</p>
-                                <div class="mt-auto">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <small class="text-muted">
-                                            <i class="bi bi-geo-alt me-1"></i>{{ event.venue_name }}
-                                        </small>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <i class="bi bi-clock me-1"></i>{{ event.time_display }}
-                                        </small>
-                                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary btn-sm">
-                                            View Details <i class="bi bi-arrow-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-4 mb-4 animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter0|divisibleby:3 }}00ms">
+                        {% include 'Events/components/event_card.html' with event=event %}
                     </div>
                     {% endfor %}
                 {% else %}
@@ -253,43 +153,8 @@
             <div class="row">
                 {% if past_events %}
                     {% for event in past_events %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 event-card">
-                            {% if event.banner_image %}
-                                <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.title }}" 
-                                     style="height: 200px; object-fit: cover; filter: grayscale(50%);">
-                            {% elif event.banner_image_url %}
-                                <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}" 
-                                     style="height: 200px; object-fit: cover; filter: grayscale(50%);">
-                            {% else %}
-                                <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
-                                    <div class="text-center">
-                                        <i class="bi bi-calendar-check fs-1"></i>
-                                        <p class="mt-2 mb-0">{{ event.title|truncatechars:20 }}</p>
-                                    </div>
-                                </div>
-                            {% endif %}
-                            <div class="card-body d-flex flex-column">
-                                <div class="mb-2">
-                                    <span class="badge bg-success">
-                                        <i class="bi bi-check-circle me-1"></i>Completed
-                                    </span>
-                                    <span class="badge bg-secondary ms-2">{{ event.date|date:"M d" }}</span>
-                                </div>
-                                <h5 class="card-title fw-bold">{{ event.title }}</h5>
-                                <p class="card-text flex-grow-1 text-muted">{{ event.description|truncatewords:20 }}</p>
-                                <div class="mt-auto">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <i class="bi bi-geo-alt me-1"></i>{{ event.venue_name }}
-                                        </small>
-                                        <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-secondary btn-sm">
-                                            View Details <i class="bi bi-arrow-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-4 mb-4 animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter0|divisibleby:3 }}00ms">
+                        {% include 'Events/components/event_card.html' with event=event %} 
                     </div>
                     {% endfor %}
                 {% else %}
@@ -308,8 +173,8 @@
             <div class="row">
                 {% if featured_events %}
                     {% for event in featured_events %}
-                    <div class="col-md-6 mb-4">
-                        <div class="card h-100 event-card">
+                    <div class="col-md-6 mb-4 animate__animated animate__fadeIn" style="animation-delay: {{ forloop.counter0|divisibleby:2 }}00ms">
+                        <div class="card h-100 event-card featured-event-card">
                             <div class="row g-0 h-100">
                                 <div class="col-md-5">
                                     {% if event.banner_image %}
@@ -326,14 +191,27 @@
                                             </div>
                                         </div>
                                     {% endif %}
+                                    <div class="position-absolute top-0 start-0 m-2">
+                                        <div class="badge bg-warning p-2">
+                                            <i class="bi bi-star-fill me-1"></i>Featured
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-7">
                                     <div class="card-body d-flex flex-column h-100">
                                         <div class="mb-2">
-                                            <span class="badge bg-warning me-2">
-                                                <i class="bi bi-star-fill me-1"></i>Featured
+                                            <!-- Display first tag -->
+                                            {% if event.tags.all|length > 0 %}
+                                                {% with first_tag=event.tags.all.0 %}
+                                                <span class="badge" style="background-color: {{ first_tag.color }}20; color: {{ first_tag.color }}; border: 1px solid {{ first_tag.color }}40">
+                                                    {{ first_tag.name }}
+                                                </span>
+                                                {% endwith %}
+                                            {% endif %}
+                                            
+                                            <span class="badge bg-light text-dark ms-2">
+                                                <i class="bi bi-calendar-event me-1"></i>{{ event.date|date:"M d" }}
                                             </span>
-                                            <span class="badge bg-primary">{{ event.date|date:"M d" }}</span>
                                         </div>
                                         <h5 class="card-title fw-bold">{{ event.title }}</h5>
                                         <p class="card-text flex-grow-1 text-muted">{{ event.description|truncatewords:25 }}</p>
@@ -369,6 +247,33 @@
         </div>
     </div>
 </div>
+
+    </div> <!-- Close the col-lg-9 -->
+    </div> <!-- Close the row -->
+
+    <!-- Call to Action Section -->
+    <div class="mt-5 pt-5 mb-5">
+        <div class="card border-0 bg-primary text-white">
+            <div class="card-body p-5 text-center">
+                <h2 class="card-title mb-4 animate__animated animate__fadeIn">Don't Miss Out on Amazing Events!</h2>
+                <p class="card-text mb-4 animate__animated animate__fadeIn" style="animation-delay: 200ms">
+                    Stay up-to-date with the latest events, workshops, and gatherings in your community.
+                    Join our platform today to get personalized event recommendations.
+                </p>
+                <div class="animate__animated animate__fadeIn" style="animation-delay: 400ms">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'events:create_event' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-plus-circle"></i> Host Your Own Event
+                        </a>
+                    {% else %}
+                        <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-person-plus"></i> Sign Up Now
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script>
 // Section switching functionality
@@ -413,6 +318,24 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Initialize with upcoming events shown
 document.addEventListener('DOMContentLoaded', function() {
     showSection('upcoming');
+    
+    // Add animation to cards on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate__fadeIn');
+                entry.target.style.opacity = 1;
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        root: null,
+        threshold: 0.1
+    });
+    
+    document.querySelectorAll('.event-card').forEach(card => {
+        observer.observe(card);
+    });
 });
 </script>
 {% endblock %}

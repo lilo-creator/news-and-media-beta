@@ -1,0 +1,88 @@
+{% comment %}
+    This is a filter sidebar component for the events listing page.
+    
+    Usage:
+    {% include 'Events/components/filter_sidebar.html' with tags=tags current_tag=current_tag %}
+    
+    Parameters:
+    - tags: List of EventTag objects
+    - current_tag: Currently selected tag slug (if any)
+{% endcomment %}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-0 py-3">
+        <h5 class="mb-0"><i class="bi bi-funnel me-2"></i> Filter Events</h5>
+    </div>
+    <div class="card-body">
+        <!-- Search Form -->
+        <form method="get" action="{% url 'events:event_list' %}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search events..." 
+                      value="{{ search_query|default:'' }}">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+        
+        <!-- Tags Filter -->
+        <h6 class="mb-3">Event Tags</h6>
+        <div class="mb-3">
+            <a href="{% url 'events:event_list' %}" 
+               class="event-tag text-decoration-none mb-2 d-inline-block {% if not current_tag %}active{% endif %}"
+               style="background-color: #4F46E520; color: #4F46E5; border-color: #4F46E540">
+                All Events
+            </a>
+            
+            {% for tag in tags %}
+            <a href="{% url 'events:events_by_tag' tag.slug %}" 
+               class="event-tag text-decoration-none mb-2 d-inline-block {% if current_tag == tag.slug %}active{% endif %}"
+               style="background-color: {{ tag.color }}20; color: {{ tag.color }}; border-color: {{ tag.color }}40">
+                {{ tag.name }}
+            </a>
+            {% endfor %}
+        </div>
+        
+        <!-- Date Filter -->
+        <h6 class="mb-3">Date Range</h6>
+        <form method="get" action="{% url 'events:event_list' %}" class="mb-3">
+            <div class="mb-3">
+                <label for="start_date" class="form-label">From</label>
+                <input type="date" id="start_date" name="start_date" class="form-control form-control-sm">
+            </div>
+            <div class="mb-3">
+                <label for="end_date" class="form-label">To</label>
+                <input type="date" id="end_date" name="end_date" class="form-control form-control-sm">
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary w-100">Apply Filter</button>
+        </form>
+        
+        <!-- Status Filter -->
+        <h6 class="mb-3">Event Status</h6>
+        <div class="list-group list-group-flush">
+            <a href="{% url 'events:event_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                All Events
+                <span class="badge bg-primary rounded-pill">{{ total_events }}</span>
+            </a>
+            <a href="?status=upcoming" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                Upcoming
+                <span class="badge bg-primary rounded-pill">{{ upcoming_events|length }}</span>
+            </a>
+            <a href="?status=past" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                Past Events
+                <span class="badge bg-secondary rounded-pill">{{ past_events|length }}</span>
+            </a>
+            <a href="?status=featured" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                Featured
+                <span class="badge bg-warning rounded-pill">{{ featured_events|length }}</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.event-tag.active {
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+</style>

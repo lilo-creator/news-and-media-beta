@@ -1,12 +1,8 @@
 {% comment %}
-    This is a filter sidebar component for the events listing page.
+    This is a filter sidebar component for the events listing page with hardcoded values.
     
     Usage:
-    {% include 'Events/components/filter_sidebar.html' with tags=tags current_tag=current_tag %}
-    
-    Parameters:
-    - tags: List of EventTag objects
-    - current_tag: Currently selected tag slug (if any)
+    {% include 'Events/components/filter_sidebar.html' %}
 {% endcomment %}
 
 <div class="card border-0 shadow-sm mb-4">
@@ -15,10 +11,9 @@
     </div>
     <div class="card-body">
         <!-- Search Form -->
-        <form method="get" action="{% url 'events:event_list' %}" class="mb-4">
+        <form method="get" action="#" class="mb-4">
             <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search events..." 
-                      value="{{ search_query|default:'' }}">
+                <input type="text" name="q" class="form-control" placeholder="Search events...">
                 <button class="btn btn-outline-primary" type="submit">
                     <i class="bi bi-search"></i>
                 </button>
@@ -28,24 +23,65 @@
         <!-- Tags Filter -->
         <h6 class="mb-3">Event Tags</h6>
         <div class="mb-3">
-            <a href="{% url 'events:event_list' %}" 
-               class="event-tag text-decoration-none mb-2 d-inline-block {% if not current_tag %}active{% endif %}"
+            <a href="#" 
+               class="event-tag text-decoration-none mb-2 d-inline-block active"
                style="background-color: #4F46E520; color: #4F46E5; border-color: #4F46E540">
                 All Events
             </a>
             
-            {% for tag in tags %}
-            <a href="{% url 'events:events_by_tag' tag.slug %}" 
-               class="event-tag text-decoration-none mb-2 d-inline-block {% if current_tag == tag.slug %}active{% endif %}"
-               style="background-color: {{ tag.color }}20; color: {{ tag.color }}; border-color: {{ tag.color }}40">
-                {{ tag.name }}
+            <!-- Hardcoded Technology tag -->
+            <a href="#" 
+               class="event-tag text-decoration-none mb-2 d-inline-block"
+               style="background-color: #4F46E520; color: #4F46E5; border-color: #4F46E540">
+                Technology
             </a>
-            {% endfor %}
+            
+            <!-- Hardcoded Music tag -->
+            <a href="#" 
+               class="event-tag text-decoration-none mb-2 d-inline-block"
+               style="background-color: #10B98120; color: #10B981; border-color: #10B98140">
+                Music
+            </a>
+            
+            <!-- Hardcoded Art tag -->
+            <a href="#" 
+               class="event-tag text-decoration-none mb-2 d-inline-block"
+               style="background-color: #8B5CF620; color: #8B5CF6; border-color: #8B5CF640">
+                Art
+            </a>
+            
+            <!-- Hardcoded Business tag -->
+            <a href="#" 
+               class="event-tag text-decoration-none mb-2 d-inline-block"
+               style="background-color: #3B82F620; color: #3B82F6; border-color: #3B82F640">
+                Business
+            </a>
+            
+            <!-- Hardcoded Sports tag -->
+            <a href="#" 
+               class="event-tag text-decoration-none mb-2 d-inline-block"
+               style="background-color: #0EA5E920; color: #0EA5E9; border-color: #0EA5E940">
+                Sports
+            </a>
+            
+            <!-- Hardcoded Charity tag -->
+            <a href="#" 
+               class="event-tag text-decoration-none mb-2 d-inline-block"
+               style="background-color: #EC489920; color: #EC4899; border-color: #EC489940">
+                Charity
+            </a>
+            
+            <!-- Hardcoded Fitness tag -->
+            <a href="#" 
+               class="event-tag text-decoration-none mb-2 d-inline-block"
+               style="background-color: #F59E0B20; color: #F59E0B; border-color: #F59E0B40">
+                Fitness
+            </a>
         </div>
         
         <!-- Date Filter -->
         <h6 class="mb-3">Date Range</h6>
-        <form method="get" action="{% url 'events:event_list' %}" class="mb-3">
+        <form method="get" action="#" class="mb-3">
             <div class="mb-3">
                 <label for="start_date" class="form-label">From</label>
                 <input type="date" id="start_date" name="start_date" class="form-control form-control-sm">
@@ -60,21 +96,21 @@
         <!-- Status Filter -->
         <h6 class="mb-3">Event Status</h6>
         <div class="list-group list-group-flush">
-            <a href="{% url 'events:event_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 All Events
-                <span class="badge bg-primary rounded-pill">{{ total_events }}</span>
+                <span class="badge bg-primary rounded-pill">20</span>
             </a>
-            <a href="?status=upcoming" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 Upcoming
-                <span class="badge bg-primary rounded-pill">{{ upcoming_events|length }}</span>
+                <span class="badge bg-primary rounded-pill">12</span>
             </a>
-            <a href="?status=past" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 Past Events
-                <span class="badge bg-secondary rounded-pill">{{ past_events|length }}</span>
+                <span class="badge bg-secondary rounded-pill">8</span>
             </a>
-            <a href="?status=featured" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                 Featured
-                <span class="badge bg-warning rounded-pill">{{ featured_events|length }}</span>
+                <span class="badge bg-warning rounded-pill">5</span>
             </a>
         </div>
     </div>

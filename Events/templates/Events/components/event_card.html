@@ -1,0 +1,87 @@
+{% comment %}
+    This is a reusable event card component to display events consistently throughout the site.
+    
+    Usage:
+    {% include 'Events/components/event_card.html' with event=event %}
+    
+    Parameters:
+    - event: The Event object to display
+    - show_host: (Optional) Boolean to show/hide host info (default: False)
+{% endcomment %}
+
+<div class="card h-100 event-card {% if event.is_featured %}featured-event-card{% endif %}">
+    <div class="position-relative">
+        {% if event.banner_image %}
+            <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.title }}">
+        {% elif event.banner_image_url %}
+            <img src="{{ event.banner_image_url }}" class="card-img-top" alt="{{ event.title }}">
+        {% else %}
+            <div class="card-img-top bg-primary text-white d-flex align-items-center justify-content-center">
+                <div class="text-center">
+                    <i class="bi bi-calendar-event fs-1"></i>
+                    <p class="mt-2 mb-0">{{ event.title|truncatechars:20 }}</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Date badge -->
+        <div class="position-absolute top-0 end-0 m-2">
+            <div class="badge bg-light text-dark p-2 rounded-pill shadow-sm">
+                <i class="bi bi-calendar-event me-1"></i>{{ event.date|date:"M d" }}
+            </div>
+        </div>
+        
+        {% if event.is_featured %}
+        <div class="position-absolute top-0 start-0 m-2">
+            <div class="badge bg-warning p-2">
+                <i class="bi bi-star-fill me-1"></i>Featured
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="card-body d-flex flex-column">
+        <div class="mb-2">
+            <!-- Display first tag -->
+            {% if event.tags.all|length > 0 %}
+                {% with first_tag=event.tags.all.0 %}
+                <span class="badge" style="background-color: {{ first_tag.color }}20; color: {{ first_tag.color }}; border: 1px solid {{ first_tag.color }}40">
+                    {{ first_tag.name }}
+                </span>
+                {% endwith %}
+            {% endif %}
+            
+            <!-- Show past event badge -->
+            {% if not event.is_upcoming %}
+                <span class="badge bg-secondary ms-1">Past Event</span>
+            {% endif %}
+        </div>
+        <h5 class="card-title fw-bold">{{ event.title }}</h5>
+        <p class="card-text flex-grow-1 text-muted">{{ event.description|truncatewords:15 }}</p>
+        
+        <div class="mt-auto">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <small class="text-muted">
+                    <i class="bi bi-geo-alt me-1"></i>{{ event.venue_name }}
+                </small>
+            </div>
+            
+            {% if show_host %}
+            <div class="mb-2">
+                <small class="text-muted d-flex align-items-center">
+                    <i class="bi bi-people me-1"></i>
+                    <span>Hosted by: {{ event.host.name }}</span>
+                </small>
+            </div>
+            {% endif %}
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    <i class="bi bi-clock me-1"></i>{{ event.time_display }}
+                </small>
+                <a href="{% url 'events:event_detail' event.slug %}" class="btn btn-primary btn-sm">
+                    View Details <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

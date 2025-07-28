@@ -191,3 +191,17 @@ def events_by_host(request, host_id):
     }
     
     return render(request, 'Events/events_by_host.html', context)
+
+def sitemap_xml(request):
+    """Generate XML sitemap for better SEO."""
+    events = Event.objects.filter(is_active=True)
+    tags = EventTag.objects.all()
+    
+    context = {
+        'events': events,
+        'tags': tags,
+    }
+    
+    response = render(request, 'Events/sitemap.xml', context)
+    response['Content-Type'] = 'application/xml'
+    return response

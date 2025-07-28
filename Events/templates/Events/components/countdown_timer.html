@@ -1,0 +1,114 @@
+{% comment %}
+    This is a reusable countdown timer component for events.
+    
+    Usage:
+    {% include 'Events/components/countdown_timer.html' with event=event %}
+    
+    Parameters:
+    - event: The Event object to display the countdown for
+{% endcomment %}
+
+{% if event.is_upcoming %}
+<div class="countdown-container my-4 animate__animated animate__fadeIn">
+    <h5 class="mb-3"><i class="bi bi-alarm me-2"></i> Event Countdown</h5>
+    <div class="countdown-timer" id="countdown-{{ event.id }}">
+        <div class="countdown-item">
+            <div class="countdown-value" id="days-{{ event.id }}">--</div>
+            <div class="countdown-label">Days</div>
+        </div>
+        <div class="countdown-item">
+            <div class="countdown-value" id="hours-{{ event.id }}">--</div>
+            <div class="countdown-label">Hours</div>
+        </div>
+        <div class="countdown-item">
+            <div class="countdown-value" id="minutes-{{ event.id }}">--</div>
+            <div class="countdown-label">Minutes</div>
+        </div>
+        <div class="countdown-item">
+            <div class="countdown-value" id="seconds-{{ event.id }}">--</div>
+            <div class="countdown-label">Seconds</div>
+        </div>
+    </div>
+</div>
+
+<style>
+.countdown-container {
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: space-between;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.countdown-item {
+    text-align: center;
+    flex: 1;
+    padding: 0 8px;
+}
+
+.countdown-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, #4F46E5, #7E22CE);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.countdown-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-top: 5px;
+    color: #6c757d;
+    font-weight: 600;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set the date for the event (YYYY-MM-DD format)
+    const eventDate = "{{ event.date|date:'Y-m-d' }}";
+    const eventTime = "{{ event.start_time|time:'H:i' }}";
+    const eventDateTime = new Date(`${eventDate}T${eventTime}`);
+    
+    // Update the countdown every second
+    const countdownTimer = setInterval(function() {
+        // Get today's date and time
+        const now = new Date().getTime();
+        
+        // Find the distance between now and the event date
+        const distance = eventDateTime - now;
+        
+        // Time calculations for days, hours, minutes and seconds
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        // Display the result
+        document.getElementById(`days-{{ event.id }}`).innerText = days;
+        document.getElementById(`hours-{{ event.id }}`).innerText = hours;
+        document.getElementById(`minutes-{{ event.id }}`).innerText = minutes;
+        document.getElementById(`seconds-{{ event.id }}`).innerText = seconds;
+        
+        // If the countdown is finished, display a message
+        if (distance < 0) {
+            clearInterval(countdownTimer);
+            document.getElementById(`countdown-{{ event.id }}`).innerHTML = `
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle me-2"></i>
+                    This event has begun!
+                </div>
+            `;
+        }
+    }, 1000);
+});
+</script>
+{% endif %}

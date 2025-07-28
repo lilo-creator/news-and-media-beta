@@ -77,10 +77,12 @@ All kick-off times are 15:00 BST unless otherwise mentioned.
         'headline': 'Revealed: What killed wrestling legend Hulk Hogan.',
         'image_url': 'https://www.tv47.digital/wp-content/uploads/2025/07/Hosts-Morocco-secured-a-dramatic-4-2-victory-over-the-Democratic-Republic-of-Congo-in-a-pulsating-Group-A-encounter-of-the-TotalEnergies-CAF-Womens-Africa-Cup-of-Nations-Morocco-2024-on-Wednesday-6-1.jpg',
         'article': '''<ul>
-<li>Grand Slam: Wimbledon 2025</li>
-<li>Top Seed: Iga Swiatek</li>
-<li>Latest Winner: Novak Djokovic</li>
-<li>Full Article: Serena’s comeback is highly anticipated, with fans eager to see her performance against the world’s best.</li>
+<li>Grand Slam:Two-time WWE Hall of Famer and former world champion</li>
+<li>Top Seed:WWE achieve global recognition in the 1980s.</li>
+<li>Latest Winner: WWE Hall of Famer and former world champion</li>
+<li>Full Article: The professional wrestling world and its legions of fans across the globe are mourning the unexpected death of Terry Bollea, universally known as Hulk Hogan, who passed away on Thursday at the age of 71. The cause of death has been confirmed as cardiac arrest.
+
+The news of Hogan’s sudden demise sent shockwaves through the sports entertainment community. Emergency responders were dispatched to Hogan’s residence in Clearwater, Florida, on Thursday morning following a 911 call reporting a possible cardiac arrest.</li>
 </ul>''',
     },
     'volleyball': {
@@ -105,7 +107,7 @@ The team which is set to depart today (Sunday) for host nation ahead of the even
 <li>World Cup Qualifiers: South Africa, New Zealand, England</li>
 <li>Next Big Match: South Africa vs New Zealand</li>
 <li>Top Try Scorer:  Harry Wilson</li>
-<li>Full Article: After a last-gasp win over the Flying Fijians in Newcastle earlier this month, the Wallabies turned their focus towards the Lions Series opener in the River City. The Lions went into the match as strong favourites, and the visitors lived up to that label in the first Test.
+<li>Full Article: After a lorigin mainast-gasp win over the Flying Fijians in Newcastle earlier this month, the Wallabies turned their focus towards the Lions Series opener in the River City. The Lions went into the match as strong favourites, and the visitors lived up to that label in the first Test.
 
 Sione Tuipulotu and Tom Curry scored a try each as the Lions took control during the opening 40 minutes, before Dan Sheehan crossed early in the second term to extend their lead to a commanding 24-5 margin by the 42nd minute.</li>
 </ul>''',

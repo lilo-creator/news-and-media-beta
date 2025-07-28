@@ -3,8 +3,38 @@
 
 {% block title %}{{ event.title }} - Events{% endblock %}
 
+{% block meta %}
+<!-- Enhanced SEO meta tags for better discoverability -->
+<meta name="description" content="{{ event.description|truncatechars:160 }}">
+<meta property="og:title" content="{{ event.title }} - Events">
+<meta property="og:description" content="{{ event.description|truncatechars:160 }}">
+<meta property="og:type" content="event">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% if event.banner_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ event.banner_image.url }}">
+{% elif event.banner_image_url %}
+<meta property="og:image" content="{{ event.banner_image_url }}">
+{% endif %}
+<meta property="og:site_name" content="News & Media">
+<meta property="og:event:start_time" content="{{ event.date|date:'c' }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ event.title }} - Events">
+<meta name="twitter:description" content="{{ event.description|truncatechars:160 }}">
+{% if event.banner_image %}
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ event.banner_image.url }}">
+{% elif event.banner_image_url %}
+<meta name="twitter:image" content="{{ event.banner_image_url }}">
+{% endif %}
+
+<!-- Structured Data (JSON-LD) for search engines -->
+{% include 'Events/components/event_schema.html' with event=event %}
+{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'Events/css/events.css' %}">
+<link rel="stylesheet" href="{% static 'Events/css/enhanced-events.css' %}">
+<!-- Add animation library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 {% endblock %}
 
 {% block content %}
@@ -43,11 +73,46 @@
         <!-- Main Content -->
         <div class="col-lg-8">
             <!-- Event Header -->
-            <div class="mb-4">
+            <div class="mb-4 animate__animated animate__fadeIn">
                 <h1 class="mb-3">{{ event.title }}</h1>
-                <p class="text-muted mb-3">
-                    <i class="bi bi-eye"></i> {{ event.views_count }} views
-                </p>
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-eye"></i> {{ event.views_count }} views
+                    </p>
+                    <!-- Social Sharing -->
+                    <div class="social-share-buttons">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                           target="_blank" class="social-share-button facebook" title="Share on Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?text=Check out this event: {{ event.title|urlencode }}&url={{ request.build_absolute_uri }}" 
+                           target="_blank" class="social-share-button twitter" title="Share on Twitter">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" 
+                           target="_blank" class="social-share-button linkedin" title="Share on LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                        <a href="https://api.whatsapp.com/send?text=Check out this event: {{ event.title|urlencode }} - {{ request.build_absolute_uri }}" 
+                           target="_blank" class="social-share-button whatsapp" title="Share on WhatsApp">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Status badge -->
+                <div class="mb-3">
+                    {% if event.is_upcoming %}
+                        <span class="badge bg-primary">Upcoming</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Past Event</span>
+                    {% endif %}
+                    {% if event.is_featured %}
+                        <span class="badge bg-warning ms-2">
+                            <i class="bi bi-star-fill me-1"></i>Featured
+                        </span>
+                    {% endif %}
+                </div>
                 
                 <!-- Tags -->
                 {% if event.tags.all %}
@@ -57,7 +122,20 @@
                     {% endfor %}
                 </div>
                 {% endif %}
+                
+                <!-- Add to calendar -->
+                <div class="mt-3">
+                    <a href="https://www.google.com/calendar/render?action=TEMPLATE&text={{ event.title|urlencode }}&dates={{ event.date|date:'Ymd' }}T{{ event.start_time|time:'His' }}/{{ event.date|date:'Ymd' }}T{{ event.end_time|time:'His' }}&details={{ event.description|truncatechars:1000|urlencode }}&location={{ event.venue_name|urlencode }} {{ event.venue_address|urlencode }}" 
+                       target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-calendar-plus"></i> Add to Google Calendar
+                    </a>
+                </div>
             </div>
+
+            <!-- Event Countdown Timer -->
+            {% if event.is_upcoming %}
+                {% include 'Events/components/countdown_timer.html' with event=event %}
+            {% endif %}
 
             <!-- Event Description -->
             <div class="mb-4">
@@ -81,31 +159,57 @@
             </div>
             {% endif %}
 
-            <!-- Registration Section -->
-            {% if event.registration_link %}
-            <div class="text-center my-5">
-                <div class="event-price mb-3">{{ event.ticket_price }}</div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ event.registration_link }}" class="btn btn-register btn-lg w-100" target="_blank">
-                            <i class="bi bi-box-arrow-up-right"></i> External Registration
-                        </a>
-                    </div>
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-outline-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registrationModal">
-                            <i class="bi bi-calendar-plus"></i> Quick Register
-                        </button>
+            <!-- Enhanced Registration Section -->
+            <div class="card border-0 shadow-lg my-5 animate__animated animate__fadeIn">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-3">Registration Information</h4>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="ticket-price-badge me-3">
+                                    <i class="bi bi-ticket-perforated-fill"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">{{ event.ticket_price }}</h5>
+                                    <p class="text-muted small mb-0">Secure your spot now</p>
+                                </div>
+                            </div>
+                            
+                            {% if event.is_upcoming %}
+                            <p class="mb-0">
+                                <i class="bi bi-clock-history text-primary me-2"></i>
+                                <strong>Registration ends on:</strong> {{ event.date|date:"F j, Y" }}
+                            </p>
+                            {% else %}
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                This event has already taken place
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
+                            {% if event.is_upcoming %}
+                                {% if event.registration_link %}
+                                <div class="d-grid gap-2">
+                                    <a href="{{ event.registration_link }}" class="btn btn-register btn-lg" target="_blank">
+                                        <i class="bi bi-box-arrow-up-right"></i> External Registration
+                                    </a>
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                                        <i class="bi bi-calendar-plus"></i> Quick Register
+                                    </button>
+                                </div>
+                                {% else %}
+                                <button type="button" class="btn btn-register btn-lg" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                                    <i class="bi bi-calendar-plus"></i> Register Now
+                                </button>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary p-3 fs-6">Event Completed</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-            {% else %}
-            <div class="text-center my-5">
-                <div class="event-price mb-3">{{ event.ticket_price }}</div>
-                <button type="button" class="btn btn-register btn-lg" data-bs-toggle="modal" data-bs-target="#registrationModal">
-                    <i class="bi bi-calendar-plus"></i> Register Now
-                </button>
-            </div>
-            {% endif %}
         </div>
 
         <!-- Sidebar -->

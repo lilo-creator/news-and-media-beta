@@ -115,7 +115,7 @@ ARTICLE_DATA = {
     'football': {
         'sport': 'Football',
         'headline': 'Manchester City clinched a dramatic win over Arsenal in a thrilling Premier League encounter last night.',
-        'image_url': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop',
+        'image_url': 'https://www.aljazeera.com/wp-content/uploads/2023/04/2023-02-15T213852Z_363747686_UP1EJ2F1O4QOP_RTRMADP_3_SOCCER-ENGLAND-ARS-MCI-REPORT-1682419284.jpg?resize=1920%2C1080',
         'article': '''<ul>
 <li>Premier League Standings: Brentford v Chelsea</li>
 <li>Next Big Match: Man City v Burnley</li>

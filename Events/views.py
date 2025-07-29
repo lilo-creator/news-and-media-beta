@@ -94,7 +94,7 @@ def get_dummy_events():
             'venue_name': 'Modern Art Gallery',
             'venue_address': '67 Culture Street, Chicago, IL',
             'venue_map_url': 'https://maps.google.com',
-            'banner_image_url': 'https://images.unsplash.com/photo-1594794312433-062c1040e97c?q=80&w=1974&auto=format&fit=crop',
+            'banner_image_url': 'https://www.mesaartscenter.com/sysimg/RonEnglish-19.jpg',
             'is_featured': False,
             'is_free': True,
             'price': 'Free',

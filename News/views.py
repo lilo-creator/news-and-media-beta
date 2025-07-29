@@ -28,7 +28,7 @@ def get_dummy_articles():
         {
             'title': 'Major Medical Breakthrough in Cancer Treatment',
             'slug': 'cancer-treatment-breakthrough',
-            'get_featured_image_url': 'https://images.unsplash.com/photo-1579154392429-0e6b4e580ea5?q=80&w=1470&auto=format&fit=crop',
+            'get_featured_image_url': 'https://i.ytimg.com/vi/x0OC9E3PkiA/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLC25Wdk9TP62LLHoh9UtQM-pxVYLg',
             'excerpt': 'Researchers announce a promising new therapy that has shown remarkable results in clinical trials, potentially offering hope for patients with previously untreatable forms of cancer.',
             'featured': False,
             'category': {'name': 'Health', 'slug': 'health'},

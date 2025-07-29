@@ -191,16 +191,25 @@
                             {% if event.is_upcoming %}
                                 {% if event.registration_link %}
                                 <div class="d-grid gap-2">
-                                    <a href="{{ event.registration_link }}" class="btn btn-register btn-lg" target="_blank">
+                                    <a href="#" class="btn btn-register btn-lg position-relative" onclick="event.preventDefault();">
                                         <i class="bi bi-box-arrow-up-right"></i> External Registration
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                            Coming Soon
+                                        </span>
                                     </a>
-                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                                    <button type="button" class="btn btn-outline-primary position-relative" disabled>
                                         <i class="bi bi-calendar-plus"></i> Quick Register
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.7em;">
+                                            Soon
+                                        </span>
                                     </button>
                                 </div>
                                 {% else %}
-                                <button type="button" class="btn btn-register btn-lg" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                                <button type="button" class="btn btn-register btn-lg position-relative" disabled>
                                     <i class="bi bi-calendar-plus"></i> Register Now
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                        Coming Soon
+                                    </span>
                                 </button>
                                 {% endif %}
                             {% else %}
@@ -373,8 +382,11 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="button" class="btn btn-primary position-relative" disabled>
                             <i class="bi bi-calendar-plus"></i> Register
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                Soon
+                            </span>
                         </button>
                     </div>
                 </form>

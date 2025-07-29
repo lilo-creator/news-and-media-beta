@@ -210,17 +210,107 @@
                 border-color: rgba(255,255,255,0.2);
             }
             
-            /* Animated hamburger menu */
-            .navbar-toggler {
+        /* Dropdown menu enhancements */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+            animation: fadeIn 0.3s ease;
+            background: #ffffff;
+        }
+        
+        /* Desktop dropdown styling */
+        @media (min-width: 769px) {
+            .dropdown-menu {
+                background: white;
                 border: none;
-                background: transparent;
-                padding: 10px;
-                border-radius: 5px;
-                transition: all 0.3s;
-                position: relative;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                padding: 0.75rem 0;
+                min-width: 220px;
             }
             
-            .navbar-toggler:focus {
+            .dropdown-item {
+                padding: 0.6rem 1.5rem;
+                color: #333 !important;
+                display: flex;
+                align-items: center;
+                transition: all 0.2s;
+            }
+            
+            .dropdown-item:hover {
+                background: rgba(30, 60, 114, 0.05);
+                color: #1e3c72 !important;
+                transform: translateX(5px);
+            }
+            
+            .dropdown-divider {
+                margin: 0.5rem 0;
+                border-color: rgba(0,0,0,0.05);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Enhanced styling for dropdown headers and badges */
+        .dropdown-header {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #1e3c72;
+            font-size: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            margin-bottom: 0;
+        }
+        
+        .dropdown-menu .badge {
+            font-size: 0.65rem;
+            padding: 0.35rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        /* Make the dropdown menu scrollable if it gets too long */
+        @media (min-width: 769px) {
+            .dropdown-menu {
+                max-height: 80vh;
+                overflow-y: auto;
+                scrollbar-width: thin;
+            }
+            
+            /* Custom scrollbar styling */
+            .dropdown-menu::-webkit-scrollbar {
+                width: 5px;
+            }
+            
+            .dropdown-menu::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+            
+            .dropdown-menu::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 10px;
+            }
+            
+            .dropdown-menu::-webkit-scrollbar-thumb:hover {
+                background: #a1a1a1;
+            }
+        }
+            
+        /* Animated hamburger menu */
+        .navbar-toggler {
+            border: none;
+            background: transparent;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            position: relative;
+        }            .navbar-toggler:focus {
                 box-shadow: none;
                 outline: none;
             }
@@ -254,10 +344,57 @@
                             <i class="bi bi-newspaper me-1"></i>News
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link-modern {% if 'sports' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'sports:sport_list' %}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link-modern dropdown-toggle {% if 'sports' in request.resolver_match.namespace %}active{% endif %}" href="#" id="sportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-trophy me-1"></i>Sports
                         </a>
+                        <ul class="dropdown-menu shadow border-0" aria-labelledby="sportsDropdown">
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}"><i class="bi bi-grid me-2"></i>All Sports</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <!-- Team Sports Section -->
+                            <li><h6 class="dropdown-header">Team Sports</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=football"><i class="bi bi-dribbble me-2"></i>Football</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=basketball"><i class="bi bi-basketball me-2"></i>Basketball</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=cricket"><i class="bi bi-record me-2"></i>Cricket</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=rugby"><i class="bi bi-egg me-2"></i>Rugby</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=volleyball"><i class="bi bi-circle-fill me-2"></i>Volleyball</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=baseball"><i class="bi bi-pentagon me-2"></i>Baseball</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=hockey"><i class="bi bi-dash-lg me-2"></i>Hockey</a></li>
+                            
+                            <!-- Individual Sports Section -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Individual Sports</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=tennis"><i class="bi bi-circle me-2"></i>Tennis</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=golf"><i class="bi bi-flag me-2"></i>Golf</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=swimming"><i class="bi bi-water me-2"></i>Swimming</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=athletics"><i class="bi bi-stopwatch me-2"></i>Athletics</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=boxing"><i class="bi bi-patch me-2"></i>Boxing</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=wrestling"><i class="bi bi-person-arms-up me-2"></i>Wrestling</a></li>
+                            
+                            <!-- Racing Sports Section -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Racing & Motor Sports</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=f1"><i class="bi bi-speedometer me-2"></i>Formula 1</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=motogp"><i class="bi bi-bicycle me-2"></i>MotoGP</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=nascar"><i class="bi bi-car-front me-2"></i>NASCAR</a></li>
+                            
+                            <!-- Winter Sports Section -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Winter Sports</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=skiing"><i class="bi bi-snow me-2"></i>Skiing</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=snowboarding"><i class="bi bi-snow2 me-2"></i>Snowboarding</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=ice-hockey"><i class="bi bi-disc me-2"></i>Ice Hockey</a></li>
+                            
+                            <!-- Featured Articles Section -->
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Featured Articles</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=football&featured=true"><span class="badge bg-primary me-2">New</span>Football News</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=basketball&featured=true"><span class="badge bg-primary me-2">Hot</span>Basketball News</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=f1&featured=true"><span class="badge bg-danger me-2">Hot</span>Formula 1 News</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=rugby&featured=true"><span class="badge bg-info text-dark me-2">New</span>Rugby News</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}?sport=volleyball&featured=true"><span class="badge bg-success me-2">New</span>Volleyball News</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link-modern {% if 'events' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'events:event_list' %}">

@@ -1,15 +1,14 @@
-
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import Http404
 
 def get_dummy_sports():
     """Return a list of dummy sports categories that can be used by views."""
-    return [
+    sports = [
         {
             'name': 'Football',
             'pk': 1,
-            'image': {'url': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop'},
+            'image': {'url': ARTICLE_DATA['football']['image_url']},
             'description': 'The world\'s most popular sport played with a spherical ball between two teams of eleven players.'
         },
         {
@@ -61,6 +60,7 @@ def get_dummy_sports():
             'description': 'A team sport in which two teams of six players are separated by a net.'
         }
     ]
+    return sports
 
 def team_detail(request, pk):
     return render(request, 'Sports/team_detail.html', {'team': {
@@ -109,28 +109,14 @@ def sport_detail(request, pk):
 
 def sport_list(request):
     sports = get_dummy_sports()
+    for sport in sports:
+        article = ARTICLE_DATA.get(sport['name'].lower())
+        if article:
+            sport['image_url'] = article['image_url']
     return render(request, 'Sports/sport_list.html', {'sports': sports})
 
 ARTICLE_DATA = {
-    'football': {
-        'sport': 'Football',
-        'headline': 'Manchester City clinched a dramatic win over Arsenal in a thrilling Premier League encounter last night.',
-        'image_url': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop',
-        'article': '''<ul>
-<li>Premier League Standings: Brentford v Chelsea</li>
-<li>Next Big Match: Man City v Burnley</li>
-<li>Top Scorer: Erling Haaland</li>
-<li>Full Article: The broadcast selections have been announced for live TV in the UK for Premier League matches in Matchweeks 4, 5 and 6 in September.
-
-While the Premier League's fixture announcement dates advised that September's fixtures would be released on 9 July, delays in local approvals for fixtures unfortunately meant only August fixtures were announced on this date.
-
-The Premier League would like to apologise for not being able to confirm these fixtures until now. However, today’s announcement is in line with our commitment to give at least six weeks’ notice for fixture announcements before January. 
-
-All kick-off times are 15:00 BST unless otherwise mentioned. 
-
-</li>
-</ul>''',
-    },
+    
     'basketball': {
         'sport': 'Basketball',
         'headline': 'NBA 2K26 All-Summer League teams announced.',
@@ -193,6 +179,25 @@ Sione Tuipulotu and Tom Curry scored a try each as the Lions took control during
 <li>Full Article: The professional wrestling world and its legions of fans across the globe are mourning the unexpected death of Terry Bollea, universally known as Hulk Hogan, who passed away on Thursday at the age of 71. The cause of death has been confirmed as cardiac arrest.
 
 The news of Hogan’s sudden demise sent shockwaves through the sports entertainment community. Emergency responders were dispatched to Hogan’s residence in Clearwater, Florida, on Thursday morning following a 911 call reporting a possible cardiac arrest..</li>
+</ul>''',
+    },
+    'football': {
+        'sport': 'Football',
+        'headline': 'Manchester City clinched a dramatic win over Arsenal in a thrilling Premier League encounter last night.',
+        'image_url': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop',
+        'article': '''<ul>
+<li>Premier League Standings: Brentford v Chelsea</li>
+<li>Next Big Match: Man City v Burnley</li>
+<li>Top Scorer: Erling Haaland</li>
+<li>Full Article: The broadcast selections have been announced for live TV in the UK for Premier League matches in Matchweeks 4, 5 and 6 in September.
+
+While the Premier League's fixture announcement dates advised that September's fixtures would be released on 9 July, delays in local approvals for fixtures unfortunately meant only August fixtures were announced on this date.
+
+The Premier League would like to apologise for not being able to confirm these fixtures until now. However, today's announcement is in line with our commitment to give at least six weeks' notice for fixture announcements before January. 
+
+All kick-off times are 15:00 BST unless otherwise mentioned. 
+
+</li>
 </ul>''',
     },
 }

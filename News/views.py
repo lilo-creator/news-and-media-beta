@@ -28,7 +28,7 @@ def get_dummy_articles():
         {
             'title': 'Major Medical Breakthrough in Cancer Treatment',
             'slug': 'cancer-treatment-breakthrough',
-            'get_featured_image_url': 'https://images.unsplash.com/photo-1579154392429-0e6b4e580ea5?q=80&w=1470&auto=format&fit=crop',
+            'get_featured_image_url': 'https://media.istockphoto.com/id/1477482163/photo/doctor-healthcare-or-finger-on-xray-hologram-in-tuberculosis-virus-cancer-analytics-or-asthma.jpg?s=1024x1024&w=is&k=20&c=m_1i1T9MuGtxw7mzCf9zWxI7q9_6a_51JCBYhlURIhw=',
             'excerpt': 'Researchers announce a promising new therapy that has shown remarkable results in clinical trials, potentially offering hope for patients with previously untreatable forms of cancer.',
             'featured': False,
             'category': {'name': 'Health', 'slug': 'health'},
@@ -83,7 +83,7 @@ def get_dummy_articles():
         {
             'title': 'Major Security Vulnerability Discovered in Popular Software',
             'slug': 'security-vulnerability-software',
-            'get_featured_image_url': 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1470&auto=format&fit=crop',
+            'get_featured_image_url': 'https://images.pexels.com/photos/938165/pexels-photo-938165.jpeg',
             'excerpt': 'Cybersecurity experts urge immediate updates as critical flaw affects millions of users worldwide, with potential for data breaches and unauthorized access to sensitive information.',
             'featured': False,
             'category': {'name': 'Technology', 'slug': 'technology'},
@@ -129,7 +129,7 @@ def get_dummy_articles():
             'slug': 'middle-east-peace-agreement',
             'get_featured_image_url': 'https://images.unsplash.com/photo-1523995462485-3d171b5c8fa9?q=80&w=1435&auto=format&fit=crop',
             'excerpt': 'After decades of conflict, regional powers have reached a comprehensive peace accord that addresses territorial disputes, security concerns, and economic cooperation frameworks.',
-            'featured': True,
+            'featured': False,  # Changed from True to False
             'category': {'name': 'Politics', 'slug': 'politics'},
             'publish_date': '2025-07-14',
             'view_count': 3245,

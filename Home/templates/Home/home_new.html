@@ -291,9 +291,9 @@
     <!-- Category Navigation -->
     <div class="container mb-4">
         <div class="category-pills">
-            <a href="#" class="category-pill active">All</a>
+            <a href="/" class="category-pill active">All</a>
             {% for category in categories %}
-                <a href="#" class="category-pill">{{ category.name }}</a>
+                <a href="/category/{{ category.slug }}" class="category-pill">{{ category.name }}</a>
             {% endfor %}
         </div>
     </div>
@@ -384,14 +384,13 @@
             <div class="card-body p-5 text-center">
                 <h2 class="h3 mb-4">Subscribe to Our Newsletter</h2>
                 <p class="mb-4">Stay updated with the latest news, events, and exclusive content directly in your inbox.</p>
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control form-control-lg" placeholder="Your email address" aria-label="Email address">
-                            <button class="btn btn-primary" type="button">Subscribe <i class="bi bi-envelope"></i></button>
-                        </div>
+                <form method="POST" action="{% url 'home:subscribe_newsletter' %}">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <input type="email" name="email" class="form-control form-control-lg" placeholder="Your email address" aria-label="Email address" required>
+                        <button class="btn btn-primary" type="submit">Subscribe <i class="bi bi-envelope"></i></button>
                     </div>
-                </div>
+                </form>
                 <p class="text-muted small mt-3">We respect your privacy. Unsubscribe at any time.</p>
             </div>
         </div>

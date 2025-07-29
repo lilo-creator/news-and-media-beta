@@ -43,7 +43,7 @@ def get_dummy_events():
             'views_count': 1250,
             'host': {'name': 'TechCorp Inc.', 'logo_url': 'https://via.placeholder.com/150'},
             'tags': [{'name': 'Technology'}, {'name': 'AI'}, {'name': 'Professional'}],
-            'registration_link': 'https://example.com/register/tech-summit',
+            'registration_link': '#coming-soon', # Changed from actual URL to indicate it's not functional
             'schedule': [
                 {'time': '09:00 - 10:00', 'title': 'Registration & Breakfast'},
                 {'time': '10:00 - 11:30', 'title': 'Keynote: Future of AI', 'speaker': 'Dr. Sarah Chen'},
@@ -74,7 +74,7 @@ def get_dummy_events():
             'views_count': 3200,
             'host': {'name': 'City Events', 'logo_url': 'https://via.placeholder.com/150'},
             'tags': [{'name': 'Music'}, {'name': 'Entertainment'}, {'name': 'Festival'}],
-            'registration_link': 'https://example.com/register/music-festival',
+            'registration_link': '#coming-soon', # Changed from actual URL to indicate it's not functional
             'schedule': [
                 {'time': '14:00 - 15:00', 'title': 'Opening Act: The Local Band'},
                 {'time': '15:30 - 16:30', 'title': 'Rising Stars Performance'},
@@ -94,7 +94,7 @@ def get_dummy_events():
             'venue_name': 'Modern Art Gallery',
             'venue_address': '67 Culture Street, Chicago, IL',
             'venue_map_url': 'https://maps.google.com',
-            'banner_image_url': 'https://images.unsplash.com/photo-1594794312433-062c1040e97c?q=80&w=1974&auto=format&fit=crop',
+            'banner_image_url': 'https://media.istockphoto.com/id/526927807/photo/outdoor-art-gallery-on-union-square-san-francisco.jpg?s=612x612&w=0&k=20&c=5pEW8tcAfY4Vvp7CYC8PqjFiAz4fK8kN91NJj5cCFTA=',
             'is_featured': False,
             'is_free': True,
             'price': 'Free',
@@ -131,7 +131,7 @@ def get_dummy_events():
             'views_count': 920,
             'host': {'name': 'Business Growth Network', 'logo_url': 'https://via.placeholder.com/150'},
             'tags': [{'name': 'Business'}, {'name': 'Professional'}, {'name': 'Leadership'}],
-            'registration_link': 'https://example.com/register/business-conference',
+            'registration_link': '#coming-soon', # Changed from actual URL to indicate it's not functional
             'schedule': [
                 {'time': '08:30 - 09:00', 'title': 'Registration & Coffee'},
                 {'time': '09:00 - 10:30', 'title': 'Keynote: Future of Leadership', 'speaker': 'Amanda Rodriguez, CEO'},
@@ -162,7 +162,7 @@ def get_dummy_events():
             'views_count': 650,
             'host': {'name': 'Digital Marketing Pro', 'logo_url': 'https://via.placeholder.com/150'},
             'tags': [{'name': 'Marketing'}, {'name': 'Digital'}, {'name': 'Professional'}],
-            'registration_link': 'https://example.com/register/marketing-masterclass',
+            'registration_link': '#coming-soon', # Changed from actual URL to indicate it's not functional
             'schedule': [
                 {'time': '09:00 - 10:30', 'title': 'SEO Fundamentals', 'speaker': 'John Smith'},
                 {'time': '10:45 - 12:15', 'title': 'Social Media Strategy', 'speaker': 'Sarah Johnson'},
@@ -190,7 +190,7 @@ def get_dummy_events():
             'views_count': 1850,
             'host': {'name': 'Culinary Arts Society', 'logo_url': 'https://via.placeholder.com/150'},
             'tags': [{'name': 'Food'}, {'name': 'Entertainment'}, {'name': 'Festival'}],
-            'registration_link': 'https://example.com/register/food-festival',
+            'registration_link': '#coming-soon', # Changed from actual URL to indicate it's not functional
             'schedule': [
                 {'time': '12:00 - 13:30', 'title': 'Chef Demonstrations'},
                 {'time': '14:00 - 15:30', 'title': 'Wine Tasting Experience'},

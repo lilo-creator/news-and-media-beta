@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Events{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home:home' %}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'events:event_list' %}">Events</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+                    </ol>
+                </nav>
+                <h1>{{ title }}</h1>
+                <p class="text-muted">Fill out the form below to create a new event.</p>
+            </div>
+
+            <!-- Event Form -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Basic Information -->
+                        <h5 class="mb-3">Basic Information</h5>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="{{ form.title.id_for_label }}" class="form-label">Event Title *</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger small">{{ form.title.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">Description *</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="text-danger small">{{ form.description.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Date & Time -->
+                        <h5 class="mb-3 mt-4">Date & Time</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.date.id_for_label }}" class="form-label">Event Date *</label>
+                                {{ form.date }}
+                                {% if form.date.errors %}
+                                    <div class="text-danger small">{{ form.date.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.start_time.id_for_label }}" class="form-label">Start Time *</label>
+                                {{ form.start_time }}
+                                {% if form.start_time.errors %}
+                                    <div class="text-danger small">{{ form.start_time.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.end_time.id_for_label }}" class="form-label">End Time *</label>
+                                {{ form.end_time }}
+                                {% if form.end_time.errors %}
+                                    <div class="text-danger small">{{ form.end_time.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <h5 class="mb-3 mt-4">Location</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.venue_name.id_for_label }}" class="form-label">Venue Name *</label>
+                                {{ form.venue_name }}
+                                {% if form.venue_name.errors %}
+                                    <div class="text-danger small">{{ form.venue_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.host.id_for_label }}" class="form-label">Host Organization *</label>
+                                {{ form.host }}
+                                {% if form.host.errors %}
+                                    <div class="text-danger small">{{ form.host.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-muted">Select an existing organization from the list</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="{{ form.venue_address.id_for_label }}" class="form-label">Venue Address *</label>
+                                {{ form.venue_address }}
+                                {% if form.venue_address.errors %}
+                                    <div class="text-danger small">{{ form.venue_address.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Media -->
+                        <h5 class="mb-3 mt-4">Event Media</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.banner_image.id_for_label }}" class="form-label">Banner Image</label>
+                                {{ form.banner_image }}
+                                {% if form.banner_image.errors %}
+                                    <div class="text-danger small">{{ form.banner_image.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.banner_image_url.id_for_label }}" class="form-label">Or Banner Image URL</label>
+                                {{ form.banner_image_url }}
+                                {% if form.banner_image_url.errors %}
+                                    <div class="text-danger small">{{ form.banner_image_url.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Ticket Information -->
+                        <h5 class="mb-3 mt-4">Ticket Information</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.ticket_price.id_for_label }}" class="form-label">Ticket Price *</label>
+                                {{ form.ticket_price }}
+                                {% if form.ticket_price.errors %}
+                                    <div class="text-danger small">{{ form.ticket_price.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.registration_link.id_for_label }}" class="form-label">Registration Link</label>
+                                {{ form.registration_link }}
+                                {% if form.registration_link.errors %}
+                                    <div class="text-danger small">{{ form.registration_link.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Tags & Settings -->
+                        <h5 class="mb-3 mt-4">Tags & Settings</h5>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="form-label">Event Tags</label>
+                                <div class="row">
+                                    {% for tag in form.tags %}
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                {{ tag.tag }}
+                                                <label class="form-check-label" for="{{ tag.id_for_label }}">
+                                                    {{ tag.choice_label }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% if form.tags.errors %}
+                                    <div class="text-danger small">{{ form.tags.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    {{ form.is_featured }}
+                                    <label class="form-check-label" for="{{ form.is_featured.id_for_label }}">
+                                        Featured Event
+                                    </label>
+                                    <small class="text-muted d-block">Featured events appear in the sidebar</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                        Active Event
+                                    </label>
+                                    <small class="text-muted d-block">Only active events are visible to the public</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'events:event_list' %}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Create Event
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

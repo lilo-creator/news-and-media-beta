@@ -194,3 +194,13 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 VERIFICATION_REDIRECT_URL = '/accounts/verify-email-required/'
+
+# CSRF Settings for Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://news-and-media-beta-production.up.railway.app',
+    'https://*.railway.app',
+]
+
+# Get additional trusted origins from environment variable if defined
+if os.environ.get('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS.extend(os.environ.get('CSRF_TRUSTED_ORIGINS').split(','))

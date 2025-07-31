@@ -27,6 +27,7 @@ This project is configured for deployment on Railway.
    - `SECRET_KEY`: Your Django secret key
    - `DEBUG`: Set to 'False' for production
    - `ALLOWED_HOSTS`: Your Railway domain and any other domains
+   - `CSRF_TRUSTED_ORIGINS`: Your Railway domain and any other domains (with https:// prefix)
    - `DATABASE_URL`: Will be automatically set by Railway if you add a PostgreSQL database
 
 ### Local Development Build
@@ -145,3 +146,22 @@ The Events section has been fully enhanced with modern UI and features:
    - Google Calendar integration
 
 For detailed documentation on the Events module enhancements, see the [Events Enhancement Documentation](Events/EVENTS_ENHANCEMENT_DOCS.md).
+
+## Troubleshooting
+
+### CSRF Verification Failed
+
+If you encounter a CSRF verification error with a message like "Origin checking failed":
+
+1. Ensure your domain is added to the `CSRF_TRUSTED_ORIGINS` list in settings.py or as an environment variable
+2. Make sure you're using `https://` prefixes for all domains in the CSRF_TRUSTED_ORIGINS list
+3. Verify that your forms include the `{% csrf_token %}` template tag
+4. If using AJAX requests, ensure proper CSRF headers are being sent
+
+### Database Connection Issues
+
+If you have trouble connecting to the database:
+
+1. Verify the `DATABASE_URL` environment variable is correctly set in Railway
+2. Check that the PostgreSQL instance is properly provisioned and running
+3. Ensure your IP is allowed if there are any connection restrictions

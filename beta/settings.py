@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-+r$p^8jiwtstpka^g)9y)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,0.0.0.0,localhost').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,0.0.0.0,localhost,news-media-beta-production.up.railway.app').split(',')
 
 # Add Railway domain automatically
 if 'RAILWAY_STATIC_URL' in os.environ:

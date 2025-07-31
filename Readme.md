@@ -8,6 +8,60 @@ A Django web application for sharing news, sports updates, and event information
 - Different sections for News, Sports, and Events
 - Feature details page for each item
 - Admin interface for managing content
+
+## Deployment on Railway
+
+This project is configured for deployment on Railway.
+
+### Prerequisites
+
+- A Railway account
+- Railway CLI (optional for local deployment)
+
+### Deploying to Railway
+
+1. Fork or clone this repository
+2. Connect your GitHub repository to Railway
+3. Railway will automatically detect the configuration in `railway.json`
+4. Set the required environment variables in the Railway dashboard:
+   - `SECRET_KEY`: Your Django secret key
+   - `DEBUG`: Set to 'False' for production
+   - `ALLOWED_HOSTS`: Your Railway domain and any other domains
+   - `DATABASE_URL`: Will be automatically set by Railway if you add a PostgreSQL database
+
+### Local Development Build
+
+Run the build script:
+
+```bash
+# On Linux/Mac
+chmod +x build.sh
+./build.sh
+
+# On Windows
+build.bat
+```
+
+### Manual Deployment
+
+If you want to deploy manually:
+
+```bash
+# Install Railway CLI
+npm i -g @railway/cli
+
+# Login to Railway
+railway login
+
+# Link your project
+railway link
+
+# Deploy your app
+railway up
+```
+
+## UI Features
+
 - Custom styled UI
 - Enhanced Events section with:
   - Modern UI elements and animations

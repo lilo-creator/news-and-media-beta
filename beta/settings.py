@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -25,12 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+r$p^8jiwtstpka^g)9y)ct!hngez84*v4671!+rvajhk5&d2m'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-+r$p^8jiwtstpka^g)9y)ct!hngez84*v4671!+rvajhk5&d2m')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', '10.0.1.170', 'localhost', '.example.com', '.herokuapp.com']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,0.0.0.0,localhost').split(',')
+
+# Add Railway domain automatically
+if 'RAILWAY_STATIC_URL' in os.environ:
+    ALLOWED_HOSTS.append('.railway.app')
 
 
 # Application definition
@@ -91,6 +96,15 @@ DATABASES = {
     }
 }
 
+# Use Railway PostgreSQL if available
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        ssl_require=False
+    )
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -129,6 +143,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Enable WhiteNoise for static file serving in production
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (User-uploaded files)
 MEDIA_URL = '/media/'

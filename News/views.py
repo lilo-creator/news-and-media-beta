@@ -129,7 +129,7 @@ def get_dummy_articles():
             'slug': 'middle-east-peace-agreement',
             'get_featured_image_url': 'https://images.unsplash.com/photo-1523995462485-3d171b5c8fa9?q=80&w=1435&auto=format&fit=crop',
             'excerpt': 'After decades of conflict, regional powers have reached a comprehensive peace accord that addresses territorial disputes, security concerns, and economic cooperation frameworks.',
-            'featured': False,  # Changed from True to False
+            'featured': True,
             'category': {'name': 'Politics', 'slug': 'politics'},
             'publish_date': '2025-07-14',
             'view_count': 3245,

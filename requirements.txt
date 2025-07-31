@@ -6,3 +6,8 @@ Pillow==11.3.0
 python-decouple==3.8
 python-dotenv
 django-environ
+gunicorn
+waitress
+dj-database-url
+psycopg2-binary
+whitenoise

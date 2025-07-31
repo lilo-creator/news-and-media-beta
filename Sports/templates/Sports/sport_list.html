@@ -82,15 +82,126 @@
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
     
-    /* Mobile sidebar navigation has been removed */
+    /* Mobile sidebar navigation */
+    @media (max-width: 991.98px) {
+        .sports-sidebar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 260px;
+            height: calc(100vh - 70px);
+            z-index: 1040;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 20px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
         
-
+        .sports-sidebar.show {
+            transform: translateX(0);
+        }
         
-
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1030;
+            display: none;
+        }
         
-
+        .sidebar-backdrop.show {
+            display: block;
+        }
         
-
+        .sidebar-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #2a5298;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1050;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .sidebar-toggle-btn:focus {
+            outline: none;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .sidebar-header h5 {
+            color: white;
+            margin-bottom: 0;
+        }
+        
+        .sidebar-close {
+            color: rgba(255,255,255,0.7);
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .sidebar-close:hover {
+            color: white;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-nav .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-section {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-section-title {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
     }
 </style>
 {% endblock %}
@@ -215,14 +326,100 @@
     </div>
 </div>
 
-<!-- Mobile sidebar has been removed -->
+<!-- Mobile Sidebar -->
+<div class="sports-sidebar" id="sportsSidebar">
+    <div class="sidebar-header">
+        <h5><i class="bi bi-trophy me-2"></i>Sports Menu</h5>
+        <button type="button" class="sidebar-close" id="closeSidebar">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    
+    <div class="sidebar-section">
+        <p class="sidebar-section-title">Categories</p>
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="bi bi-grid"></i>All Sports
+                </a>
+            </li>
+            {% for sport in sports %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:sport_detail' sport.pk %}">
+                    <i class="bi bi-trophy"></i>{{ sport.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="sidebar-section">
+        <p class="sidebar-section-title">Featured Articles</p>
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:article_detail' 'football' %}">
+                    <i class="bi bi-newspaper"></i>Football News
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:article_detail' 'basketball' %}">
+                    <i class="bi bi-newspaper"></i>Basketball News
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:article_detail' 'rugby' %}">
+                    <i class="bi bi-newspaper"></i>Rugby News
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'sports:article_detail' 'volleyball' %}">
+                    <i class="bi bi-newspaper"></i>Volleyball News
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Sidebar Backdrop -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<!-- Sidebar Toggle Button -->
+<button class="sidebar-toggle-btn d-lg-none" id="toggleSidebar">
+    <i class="bi bi-list"></i>
+</button>
 {% endblock %}
 
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Sidebar has been removed - no mobile sidebar functionality needed
-        console.log('Sports page loaded successfully');
+        // Mobile sidebar functionality
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const closeBtn = document.getElementById('closeSidebar');
+        const sidebar = document.getElementById('sportsSidebar');
+        const backdrop = document.getElementById('sidebarBackdrop');
+        
+        function openSidebar() {
+            sidebar.classList.add('show');
+            backdrop.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSidebar() {
+            sidebar.classList.remove('show');
+            backdrop.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        toggleBtn.addEventListener('click', openSidebar);
+        closeBtn.addEventListener('click', closeSidebar);
+        backdrop.addEventListener('click', closeSidebar);
+        
+        // Close sidebar on window resize to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992 && sidebar.classList.contains('show')) {
+                closeSidebar();
+            }
+        });
     });
 </script>
 {% endblock %}

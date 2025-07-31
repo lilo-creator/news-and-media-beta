@@ -4,11 +4,11 @@ from django.http import Http404
 
 def get_dummy_sports():
     """Return a list of dummy sports categories that can be used by views."""
-    sports = [
+    return [
         {
             'name': 'Football',
             'pk': 1,
-            'image': {'url': ARTICLE_DATA['football']['image_url']},
+            'image': {'url': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=2070&auto=format&fit=crop'},
             'description': 'The world\'s most popular sport played with a spherical ball between two teams of eleven players.'
         },
         {
@@ -60,7 +60,6 @@ def get_dummy_sports():
             'description': 'A team sport in which two teams of six players are separated by a net.'
         }
     ]
-    return sports
 
 def team_detail(request, pk):
     return render(request, 'Sports/team_detail.html', {'team': {

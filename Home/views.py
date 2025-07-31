@@ -1,7 +1,4 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.core.mail import send_mail
-from django.conf import settings
+from django.shortcuts import render
 from News.views import get_dummy_articles
 from Sports.views import get_dummy_sports
 from Events.views import get_dummy_events
@@ -139,46 +136,3 @@ def feature_detail(request, feature_id):
     }
     
     return render(request, 'Home/feature_detail.html', context)
-
-def subscribe_newsletter(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        if email:
-            # Logic to save the email to the database or mailing list
-            # For now, we will just send a confirmation email
-            try:
-                send_mail(
-                    'Newsletter Subscription',
-                    'Thank you for subscribing to our newsletter!',
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
-                )
-                messages.success(request, 'You have successfully subscribed to our newsletter!')
-            except Exception as e:
-                messages.error(request, 'An error occurred while subscribing. Please try again later.')
-        else:
-            messages.error(request, 'Please provide a valid email address.')
-        return redirect('home:home')
-    return render(request, 'Home/home_new.html')
-
-def category_view(request, slug):
-    """View function to filter articles by category."""
-    categories = [
-        {'name': 'Technology', 'slug': 'technology'},
-        {'name': 'Politics', 'slug': 'politics'},
-        {'name': 'Health', 'slug': 'health'},
-        {'name': 'Business', 'slug': 'business'},
-        {'name': 'Entertainment', 'slug': 'entertainment'},
-        {'name': 'Science', 'slug': 'science'},
-        {'name': 'Sports', 'slug': 'sports'},
-    ]
-    articles = [
-        article for article in get_dummy_articles()
-        if article['category']['slug'] == slug and article.get('slug')
-    ]
-    context = {
-        'categories': categories,
-        'latest_news': articles,
-    }
-    return render(request, 'Home/home_new.html', context)

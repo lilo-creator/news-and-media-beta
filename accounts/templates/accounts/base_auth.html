@@ -4,118 +4,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Authentication{% endblock %} - News & Media</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+            --input-border-radius: 12px;
         }
-        .auth-container {
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--primary-gradient);
             min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .auth-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            max-width: 600px;
+        
+        .auth-container {
             width: 100%;
+            max-width: 420px;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .auth-header {
+        
+        .brand-logo {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
         }
-        .auth-header h2 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .auth-header p {
-            color: #666;
+        
+        .brand-logo h1 {
+            color: #1a1a1a;
+            font-weight: 700;
+            font-size: 1.75rem;
             margin: 0;
         }
-        .form-control {
-            border-radius: 10px;
-            border: 2px solid #e1e5e9;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
+        
+        .brand-logo i {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-header h2 {
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-header p {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        
+        .form-floating {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-control {
+            border-radius: var(--input-border-radius);
+            border: 2px solid #e5e7eb;
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: #fafbfc;
+        }
+        
         .form-control:focus {
             border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
         }
-        .btn-auth {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        
+        .form-floating > label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
             border: none;
-            border-radius: 10px;
-            padding: 12px 30px;
+            border-radius: var(--input-border-radius);
+            padding: 0.875rem 1.5rem;
             width: 100%;
-            color: white;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
         }
-        .btn-auth:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            color: white;
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
+        
         .auth-links {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 1.5rem;
         }
+        
+        .auth-links p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
         .auth-links a {
             color: #667eea;
             text-decoration: none;
-            transition: color 0.3s ease;
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
+        
         .auth-links a:hover {
             color: #764ba2;
+            text-decoration: underline;
         }
-        .brand-logo {
-            text-align: center;
-            margin-bottom: 30px;
+        
+        .invalid-feedback {
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
         }
-        .brand-logo h1 {
-            color: #333;
-            font-weight: bold;
-            margin: 0;
+        
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
         }
-        .alert {
-            border-radius: 10px;
+        
+        .toast {
+            border-radius: var(--input-border-radius);
             border: none;
-            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Toast container -->
+    <div class="toast-container" id="toast-container"></div>
+    
     <div class="auth-container">
         <div class="auth-card">
             <div class="brand-logo">
                 <h1><i class="fas fa-newspaper"></i> News & Media</h1>
             </div>
             
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-            
             {% block content %}
             {% endblock %}
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toastId = 'toast-' + Date.now();
+            
+            const toastHTML = `
+                <div class="toast align-items-center text-bg-${type} border-0" role="alert" id="${toastId}">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+            toast.show();
+            
+            // Remove toast element after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+        
+        // Show Django messages as toasts
+        {% if messages %}
+            {% for message in messages %}
+                showToast('{{ message|escapejs }}', '{{ message.tags }}');
+            {% endfor %}
+        {% endif %}
+        
+        // Form validation enhancement
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Please wait...';
+                        
+                        // Re-enable after 5 seconds as fallback
+                        setTimeout(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = submitBtn.getAttribute('data-original-text') || 'Submit';
+                        }, 5000);
+                    }
+                });
+                
+                // Store original button text
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.setAttribute('data-original-text', submitBtn.innerHTML);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

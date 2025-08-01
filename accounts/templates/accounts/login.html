@@ -1,25 +1,31 @@
 {% extends 'accounts/base_auth.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Sign In{% endblock %}
 
 {% block content %}
 <div class="auth-header">
-    <h2><i class="fas fa-sign-in-alt"></i> Welcome Back</h2>
+    <h2><i class="fas fa-sign-in-alt me-2"></i>Welcome Back</h2>
     <p>Sign in to your account to continue</p>
 </div>
 
-<form method="post">
+<form method="post" id="login-form">
     {% csrf_token %}
     
-    {{ form.username }}
-    {% if form.username.errors %}
-        <div class="text-danger small mb-3">{{ form.username.errors.0 }}</div>
-    {% endif %}
+    <div class="form-floating mb-3">
+        {{ form.username }}
+        <label for="{{ form.username.id_for_label }}">Username or Email</label>
+        {% if form.username.errors %}
+            <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+        {% endif %}
+    </div>
     
-    {{ form.password }}
-    {% if form.password.errors %}
-        <div class="text-danger small mb-3">{{ form.password.errors.0 }}</div>
-    {% endif %}
+    <div class="form-floating mb-3">
+        {{ form.password }}
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {% if form.password.errors %}
+            <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+        {% endif %}
+    </div>
     
     {% if form.non_field_errors %}
         <div class="alert alert-danger">
@@ -27,15 +33,61 @@
         </div>
     {% endif %}
     
-    <button type="submit" class="btn btn-auth">
-        <i class="fas fa-sign-in-alt"></i> Sign In
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me">
+            <label class="form-check-label text-muted" for="remember_me">
+                Remember me
+            </label>
+        </div>
+        <a href="{% url 'accounts:password_reset' %}" class="text-decoration-none">Forgot password?</a>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-sign-in-alt me-2"></i>Sign In
     </button>
 </form>
 
 <div class="auth-links">
-    <p><a href="{% url 'accounts:password_reset' %}">Forgot your password?</a></p>
-    <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+    <p>Don't have an account? <a href="{% url 'accounts:register' %}">Create one here</a></p>
     <p><a href="{% url 'accounts:resend_verification' %}">Resend verification email</a></p>
     <p><a href="{% url 'home:home' %}">← Back to Home</a></p>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('login-form');
+    const inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            const feedback = this.parentNode.querySelector('.invalid-feedback');
+            if (feedback) {
+                feedback.style.display = 'none';
+            }
+        });
+    });
+    
+    // Handle remember me functionality
+    const rememberCheckbox = document.getElementById('remember_me');
+    if (localStorage.getItem('rememberMe') === 'true') {
+        rememberCheckbox.checked = true;
+        const savedUsername = localStorage.getItem('savedUsername');
+        if (savedUsername) {
+            form.querySelector('[name="username"]').value = savedUsername;
+        }
+    }
+    
+    form.addEventListener('submit', function() {
+        if (rememberCheckbox.checked) {
+            localStorage.setItem('rememberMe', 'true');
+            localStorage.setItem('savedUsername', form.querySelector('[name="username"]').value);
+        } else {
+            localStorage.removeItem('rememberMe');
+            localStorage.removeItem('savedUsername');
+        }
+    });
+});
+</script>
 {% endblock %}

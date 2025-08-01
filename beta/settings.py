@@ -28,14 +28,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-+r$p^8jiwtstpka^g)9y)ct!hngez84*v4671!+rvajhk5&d2m')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+# Environment detection
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development').lower()
+IS_PRODUCTION = ENVIRONMENT == 'production'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,0.0.0.0,localhost,news-media-beta-production.up.railway.app').split(',')
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+
+# In production, ensure debug is False regardless of the environment setting
+if IS_PRODUCTION:
+    DEBUG = False
+
+# Get allowed hosts from environment or use defaults
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,0.0.0.0,localhost,news-and-media-beta-production.up.railway.app').split(',')
 
 # Add Railway domain automatically
 if 'RAILWAY_STATIC_URL' in os.environ:
     ALLOWED_HOSTS.append('.railway.app')
+
+# For development, allow all hosts if DEBUG is True
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -195,7 +208,17 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 VERIFICATION_REDIRECT_URL = '/accounts/verify-email-required/'
 
-# CSRF Settings for Railway
+# Message framework configuration for Bootstrap 5 toasts
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: 'secondary',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
+
+# CSRF Settings - Needed for secure form submissions in production
 CSRF_TRUSTED_ORIGINS = [
     'https://news-and-media-beta-production.up.railway.app',
     'https://*.railway.app',
@@ -203,4 +226,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 # Get additional trusted origins from environment variable if defined
 if os.environ.get('CSRF_TRUSTED_ORIGINS'):
-    CSRF_TRUSTED_ORIGINS.extend(os.environ.get('CSRF_TRUSTED_ORIGINS').split(','))
+    # First convert to list, then extend the CSRF_TRUSTED_ORIGINS list
+    additional_origins = os.environ.get('CSRF_TRUSTED_ORIGINS').split(',')
+    CSRF_TRUSTED_ORIGINS.extend([origin.strip() for origin in additional_origins])

@@ -8,7 +8,7 @@ from .models import UserProfile
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Enter your email'
+        'placeholder': 'Enter your email address'
     }))
     first_name = forms.CharField(max_length=30, required=True, widget=forms.TextInput(attrs={
         'class': 'form-control',
@@ -18,37 +18,6 @@ class CustomUserCreationForm(UserCreationForm):
         'class': 'form-control',
         'placeholder': 'Last Name'
     }))
-    
-    # Profile fields
-    profile_picture = forms.ImageField(required=False, widget=forms.FileInput(attrs={
-        'class': 'form-control',
-        'accept': 'image/*'
-    }))
-    phone_number = forms.CharField(max_length=15, required=False, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'Phone Number (Optional)'
-    }))
-    date_of_birth = forms.DateField(required=False, widget=forms.DateInput(attrs={
-        'class': 'form-control',
-        'type': 'date'
-    }))
-    gender = forms.ChoiceField(choices=[('', 'Select Gender')] + list(UserProfile.GENDER_CHOICES), 
-                              required=False, widget=forms.Select(attrs={
-        'class': 'form-control'
-    }))
-    bio = forms.CharField(max_length=500, required=False, widget=forms.Textarea(attrs={
-        'class': 'form-control',
-        'placeholder': 'Tell us about yourself (Optional)',
-        'rows': 3
-    }))
-    location = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'City, Country (Optional)'
-    }))
-    website = forms.URLField(required=False, widget=forms.URLInput(attrs={
-        'class': 'form-control',
-        'placeholder': 'https://yourwebsite.com (Optional)'
-    }))
 
     class Meta:
         model = User
@@ -56,19 +25,31 @@ class CustomUserCreationForm(UserCreationForm):
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Username'
+                'placeholder': ' '
             }),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['first_name'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': ' '
+        })
+        self.fields['last_name'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': ' '
+        })
+        self.fields['email'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': ' '
+        })
         self.fields['password1'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Password'
+            'placeholder': ' '
         })
         self.fields['password2'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Confirm Password'
+            'placeholder': ' '
         })
 
     def clean_email(self):
@@ -76,12 +57,6 @@ class CustomUserCreationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError("A user with this email already exists.")
         return email
-    
-    def clean_phone_number(self):
-        phone = self.cleaned_data.get('phone_number')
-        if phone and not phone.replace('+', '').replace('-', '').replace(' ', '').isdigit():
-            raise ValidationError("Please enter a valid phone number.")
-        return phone
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -91,17 +66,8 @@ class CustomUserCreationForm(UserCreationForm):
         user.is_active = False  # User will be inactive until email verification
         if commit:
             user.save()
-            # Create or get profile and update with form data
-            profile, created = UserProfile.objects.get_or_create(user=user)
-            if self.cleaned_data.get('profile_picture'):
-                profile.profile_picture = self.cleaned_data['profile_picture']
-            profile.phone_number = self.cleaned_data.get('phone_number', '')
-            profile.date_of_birth = self.cleaned_data.get('date_of_birth')
-            profile.gender = self.cleaned_data.get('gender', '')
-            profile.bio = self.cleaned_data.get('bio', '')
-            profile.location = self.cleaned_data.get('location', '')
-            profile.website = self.cleaned_data.get('website', '')
-            profile.save()
+            # Create profile for the user
+            UserProfile.objects.get_or_create(user=user)
         return user
 
 
@@ -110,11 +76,11 @@ class CustomAuthenticationForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Username or Email'
+            'placeholder': ' '
         })
         self.fields['password'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Password'
+            'placeholder': ' '
         })
 
 

@@ -6,15 +6,15 @@ from .models import UserProfile
 class UserProfileForm(forms.ModelForm):
     first_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'First Name'
+        'placeholder': ' '
     }))
     last_name = forms.CharField(max_length=30, widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Last Name'
+        'placeholder': ' '
     }))
     email = forms.EmailField(widget=forms.EmailInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Email Address'
+        'placeholder': ' '
     }))
 
     class Meta:
@@ -27,27 +27,28 @@ class UserProfileForm(forms.ModelForm):
             }),
             'phone_number': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Phone Number'
+                'placeholder': ' '
             }),
             'date_of_birth': forms.DateInput(attrs={
                 'class': 'form-control',
-                'type': 'date'
+                'type': 'date',
+                'placeholder': ' '
             }),
             'gender': forms.Select(attrs={
                 'class': 'form-control'
             }),
             'bio': forms.Textarea(attrs={
                 'class': 'form-control',
-                'placeholder': 'Tell us about yourself',
+                'placeholder': ' ',
                 'rows': 4
             }),
             'location': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'City, Country'
+                'placeholder': ' '
             }),
             'website': forms.URLInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'https://yourwebsite.com'
+                'placeholder': ' '
             }),
         }
 
